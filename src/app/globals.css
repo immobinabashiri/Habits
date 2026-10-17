@@ -1,26 +1,180 @@
 @import "tailwindcss";
 
+/* ---------- Light theme (default) ---------- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fffdf8;
+  --foreground: #34343a;
+  --card: #ffffff;
+  --card-foreground: #34343a;
+  --popover: #ffffff;
+  --popover-foreground: #34343a;
+
+  --primary: #c04459;
+  --primary-foreground: #ffffff;
+  --secondary: #ece6fa;
+  --secondary-foreground: #34343a;
+  --accent: #c9b9f0;
+  --accent-foreground: #34343a;
+
+  --muted: #f5f0e6;
+  --muted-foreground: #6f6d77;
+
+  --border: #efe9dd;
+  --input: #e4dccb;
+  --ring: #7c5fd1;
+
+  --success: #2f7d5f;
+  --success-soft: #a8dcc5; /* completed fill */
+  --warning: #8a6100;
+  --destructive: #c0392b;
+  --reward: #ffe69a; /* gems / achievements */
+  --reward-foreground: #5a4a00;
+
+  --glass: rgb(255 255 255 / 0.65);
+  --glass-border: rgb(52 52 58 / 0.1);
+  --glass-shadow: 0 8px 32px rgb(80 60 40 / 0.1);
+
+  --radius: 1rem;
+  color-scheme: light;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
+/* ---------- Dark theme: follows the system unless data-theme="light" ---------- */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not([data-theme="light"]) {
+    --background: #1f1e24;
+    --foreground: #f1eff5;
+    --card: #2a2931;
+    --card-foreground: #f1eff5;
+    --popover: #2a2931;
+    --popover-foreground: #f1eff5;
+
+    --primary: #f28c9b;
+    --primary-foreground: #2a1418;
+    --secondary: #3a3944;
+    --secondary-foreground: #f1eff5;
+    --accent: #c9b9f0;
+    --accent-foreground: #231d38;
+
+    --muted: #34333d;
+    --muted-foreground: #aaa7b3;
+
+    --border: #3a3944;
+    --input: #4a4956;
+    --ring: #c9b9f0;
+
+    --success: #7fd1ae;
+    --success-soft: #2f5f4c;
+    --warning: #e8b84a;
+    --destructive: #f28b82;
+
+    --glass: rgb(42 41 49 / 0.6);
+    --glass-border: rgb(255 255 255 / 0.1);
+    --glass-shadow: 0 8px 32px rgb(0 0 0 / 0.35);
+    color-scheme: dark;
   }
 }
 
+/* ---------- Dark theme: explicit user choice (same values as above) ---------- */
+:root[data-theme="dark"] {
+  --background: #1f1e24;
+  --foreground: #f1eff5;
+  --card: #2a2931;
+  --card-foreground: #f1eff5;
+  --popover: #2a2931;
+  --popover-foreground: #f1eff5;
+
+  --primary: #f28c9b;
+  --primary-foreground: #2a1418;
+  --secondary: #3a3944;
+  --secondary-foreground: #f1eff5;
+  --accent: #c9b9f0;
+  --accent-foreground: #231d38;
+
+  --muted: #34333d;
+  --muted-foreground: #aaa7b3;
+
+  --border: #3a3944;
+  --input: #4a4956;
+  --ring: #c9b9f0;
+
+  --success: #7fd1ae;
+  --success-soft: #2f5f4c;
+  --warning: #e8b84a;
+  --destructive: #f28b82;
+
+  --glass: rgb(42 41 49 / 0.6);
+  --glass-border: rgb(255 255 255 / 0.1);
+  --glass-shadow: 0 8px 32px rgb(0 0 0 / 0.35);
+  color-scheme: dark;
+}
+
+/* ---------- Expose tokens as Tailwind utilities (bg-primary, text-muted-foreground, ...) ---------- */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-destructive: var(--destructive);
+  --color-reward: var(--reward);
+  --color-reward-foreground: var(--reward-foreground);
+
+    --font-sans: var(--font-jakarta);
+}
+
+/* Static (non-theme-dependent) tokens */
+@theme {
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+}
+
+/* ---------- Base ---------- */
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* ---------- Glass surface: use sparingly (nav, dialogs, floating panels) ---------- */
+@utility glass {
+  background: var(--card); /* opaque fallback */
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+
+  @supports (backdrop-filter: blur(1px)) {
+    background: var(--glass);
+    backdrop-filter: blur(16px) saturate(140%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
