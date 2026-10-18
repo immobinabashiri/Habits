@@ -1,48 +1,90 @@
-import { ThemeToggle } from "@/components/layout/theme-toggle";
+import Link from "next/link";
+
+const STEPS = [
+  {
+    title: "Create your habits",
+    text: "Pick the routines that matter to you and choose which days they happen. Mark the essentials as core habits and the extras as bonus.",
+  },
+  {
+    title: "Complete them, build streaks",
+    text: "Check habits off each day to earn XP and gems. Keep a habit going on its scheduled days and your streak grows.",
+  },
+  {
+    title: "Spend gems on rewards",
+    text: "Gems are yours to spend in your own reward shop. Add the treats you actually want and save up for a bigger goal.",
+  },
+];
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen overflow-hidden p-8">
-      {/* Soft blobs so the glass blur is actually visible */}
-      <div className="absolute -top-20 -left-20 size-72 rounded-full bg-accent/50 blur-3xl" />
-      <div className="absolute top-40 right-0 size-72 rounded-full bg-primary/30 blur-3xl" />
+    <main className="relative overflow-hidden">
+      {/* Decorative soft blobs behind the hero */}
+      <div
+        aria-hidden="true"
+        className="absolute -top-24 -left-24 size-72 rounded-full bg-accent/40 blur-3xl"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute top-32 -right-24 size-72 rounded-full bg-primary/20 blur-3xl"
+      />
 
-      <div className="relative mx-auto max-w-xl space-y-4">
-        <ThemeToggle />
-
-        <h1 className="text-2xl font-bold">Token test</h1>
-        <p className="text-muted-foreground">
-          Muted text on the page background.
-        </p>
-
-        <div className="glass rounded-xl p-5">
-          <p className="font-semibold">Glass card</p>
-          <p className="text-sm text-muted-foreground">
-            Translucent surface with blur.
+      <div className="relative mx-auto max-w-5xl px-4 sm:px-6">
+        {/* Hero */}
+        <section className="py-16 text-center sm:py-24">
+          <h1 className="mx-auto max-w-2xl text-4xl font-bold tracking-tight sm:text-5xl">
+            Build habits. Earn gems. Treat yourself.
+          </h1>
+          <p className="mx-auto mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
+            Gem Habits turns your daily routines into a calm, rewarding game.
+            Complete your habits, keep your streaks going, collect gems, and
+            spend them on rewards you choose yourself.
           </p>
-        </div>
 
-        <div className="rounded-xl border border-border bg-card p-5 text-card-foreground">
-          Solid card
-        </div>
+          <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
+            <Link
+              href="/signup"
+              className="inline-flex min-h-12 items-center justify-center rounded-md bg-primary px-6 font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+            >
+              Create your account
+            </Link>
+            <Link
+              href="/login"
+              className="inline-flex min-h-12 items-center justify-center rounded-md border border-border bg-card px-6 font-semibold text-card-foreground transition-colors hover:bg-muted"
+            >
+              Log in
+            </Link>
+          </div>
+        </section>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <button className="rounded-md bg-primary px-4 py-2 font-semibold text-primary-foreground">
-            Primary
-          </button>
-          <button className="rounded-md bg-secondary px-4 py-2 font-semibold text-secondary-foreground">
-            Secondary
-          </button>
-          <span className="rounded-full bg-success-soft px-3 py-1 text-sm text-success">
-            Completed
-          </span>
-          <span className="rounded-full bg-reward px-3 py-1 text-sm text-reward-foreground">
-            +30 gems
-          </span>
-          <span className="rounded-full border border-destructive px-3 py-1 text-sm text-destructive">
-            Error
-          </span>
-        </div>
+        {/* How it works */}
+        <section aria-labelledby="how-it-works" className="pb-16 sm:pb-24">
+          <h2
+            id="how-it-works"
+            className="text-center text-2xl font-bold tracking-tight"
+          >
+            How it works
+          </h2>
+
+          <ol className="mt-8 grid gap-4 md:grid-cols-3">
+            {STEPS.map((step, index) => (
+              <li
+                key={step.title}
+                className="rounded-xl border border-border bg-card p-5 text-card-foreground"
+              >
+                <span
+                  aria-hidden="true"
+                  className="inline-flex size-8 items-center justify-center rounded-full bg-secondary text-sm font-bold text-secondary-foreground"
+                >
+                  {index + 1}
+                </span>
+                <h3 className="mt-3 font-semibold">{step.title}</h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {step.text}
+                </p>
+              </li>
+            ))}
+          </ol>
+        </section>
       </div>
     </main>
   );

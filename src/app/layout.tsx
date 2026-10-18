@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import { Footer } from "@/components/layout/footer";
+import { Navbar } from "@/components/layout/navbar";
 import { themeInitScript } from "@/lib/theme";
 import "./globals.css";
 
@@ -27,7 +29,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="flex min-h-full flex-col">
+        <Navbar />
+        {/* flex-1 pushes the footer to the bottom on short pages */}
+        <div className="flex-1">{children}</div>
+        <Footer />
+      </body>
     </html>
   );
 }
