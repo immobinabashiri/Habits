@@ -1,3 +1,5 @@
+import { Footer } from "@/components/layout/footer";
+import { Navbar } from "@/components/layout/navbar";
 import Link from "next/link";
 
 const STEPS = [
@@ -19,6 +21,8 @@ export default function Home() {
   return (
     <main className="relative overflow-hidden">
       {/* Decorative soft blobs behind the hero */}
+      <Navbar/>
+        
       <div
         aria-hidden="true"
         className="absolute -top-24 -left-24 size-72 rounded-full bg-accent/40 blur-3xl"
@@ -86,6 +90,7 @@ export default function Home() {
           </ol>
         </section>
       </div>
+      <Footer/>
     </main>
   );
 }
