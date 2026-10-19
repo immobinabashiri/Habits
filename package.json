@@ -9,8 +9,10 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "mongoose": "^9.11.2",
     "next": "16.4.2",
+    "next-auth": "^4.24.15",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "server-only": "^0.0.1"
