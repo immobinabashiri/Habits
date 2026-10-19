@@ -1,6 +1,6 @@
-import { Footer } from "@/components/layout/footer";
-import { Navbar } from "@/components/layout/navbar";
 import Link from "next/link";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth/auth";
 
 const STEPS = [
   {
@@ -17,12 +17,13 @@ const STEPS = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+  // The navbar and footer come from (public)/layout.tsx, not from this page.
+  const session = await getServerSession(authOptions);
+
   return (
     <main className="relative overflow-hidden">
       {/* Decorative soft blobs behind the hero */}
-      <Navbar/>
-        
       <div
         aria-hidden="true"
         className="absolute -top-24 -left-24 size-72 rounded-full bg-accent/40 blur-3xl"
@@ -45,18 +46,29 @@ export default function Home() {
           </p>
 
           <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
-            <Link
-              href="/signup"
-              className="inline-flex min-h-12 items-center justify-center rounded-md bg-primary px-6 font-semibold text-primary-foreground transition-opacity hover:opacity-90"
-            >
-              Create your account
-            </Link>
-            <Link
-              href="/login"
-              className="inline-flex min-h-12 items-center justify-center rounded-md border border-border bg-card px-6 font-semibold text-card-foreground transition-colors hover:bg-muted"
-            >
-              Log in
-            </Link>
+            {session ? (
+              <Link
+                href="/dashboard"
+                className="inline-flex min-h-12 items-center justify-center rounded-md bg-primary px-6 font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+              >
+                Go to dashboard
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/signup"
+                  className="inline-flex min-h-12 items-center justify-center rounded-md bg-primary px-6 font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+                >
+                  Create your account
+                </Link>
+                <Link
+                  href="/login"
+                  className="inline-flex min-h-12 items-center justify-center rounded-md border border-border bg-card px-6 font-semibold text-card-foreground transition-colors hover:bg-muted"
+                >
+                  Log in
+                </Link>
+              </>
+            )}
           </div>
         </section>
 
@@ -90,7 +102,6 @@ export default function Home() {
           </ol>
         </section>
       </div>
-      <Footer/>
     </main>
   );
 }
