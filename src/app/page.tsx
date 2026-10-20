@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
+import { Footer } from "@/components/layout/footer";
+import { Navbar } from "@/components/layout/navbar";
 
 const STEPS = [
   {
@@ -23,6 +25,7 @@ export default async function Home() {
 
   return (
     <main className="relative overflow-hidden">
+      <Navbar/>
       {/* Decorative soft blobs behind the hero */}
       <div
         aria-hidden="true"
@@ -102,6 +105,7 @@ export default async function Home() {
           </ol>
         </section>
       </div>
+      <Footer />
     </main>
   );
 }
