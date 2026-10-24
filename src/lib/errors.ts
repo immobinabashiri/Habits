@@ -6,6 +6,7 @@ export const APP_ERRORS = {
   NAME_AT_LEAST: { status: 400, message: "First name must be at least 3 characters." },
   LAST_NAME_AT_LEAST: { status: 400, message: "Last name must be at least 3 characters." },
   PASSWORD_AT_LEAST: { status: 400, message: "Password must be at least 8 characters." },
+  LIMIT_REACHED: { status: 409, message: "You have reached the limit for this item." },
   VALIDATION_FAILED: {
     status: 400,
     message: "Some fields are invalid. Please check them and try again.",

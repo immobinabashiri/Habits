@@ -21,4 +21,6 @@ export const LIMITS = {
   maxHabitGems: 100,
   maxRewardPrice: 10_000_000,
   maxMinutesPerDay: 1440,
+  maxHabits: 100,
+  maxExemptDates: 366,
 } as const;

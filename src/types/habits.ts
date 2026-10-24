@@ -70,3 +70,21 @@ export interface FreezeDecisionRecord {
   date: DateKey;
   decision: "frozen" | "broken";
 }
+// The only habit shape sent to the browser.
+export interface PublicHabit {
+  id: string;
+  name: string;
+  icon: string;
+  category: string;
+  description: string;
+  kind: HabitKind;
+  schedule: HabitSchedule;
+  xp: number;
+  gems: number;
+  timed: HabitTimedConfig | null;
+  startDate: DateKey;
+  exemptDates: DateKey[];
+  archivedAt: string | null; // ISO date; null = active
+  createdAt: string;
+  updatedAt: string;
+}
