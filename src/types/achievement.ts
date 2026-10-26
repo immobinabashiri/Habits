@@ -15,3 +15,33 @@ export interface AchievementUnlockRecord {
   unlockedOn: DateKey;
   createdAt: Date;
 }
+
+// ---- The Achievements page ----
+
+export interface AchievementCard {
+  key: string;
+  title: string;
+  description: string;
+  xp: number;
+  unlocked: boolean;
+  unlockedOn: DateKey | null;
+  progress: { current: number; target: number; unit: string } | null; // locked counters only
+  hint: string | null; // extra line for locked achievements that are not simple counters
+}
+
+// A streak bonus the user earned (kind "streak-milestone").
+export interface StreakMedal {
+  id: string;
+  title: string;
+  date: DateKey;
+}
+
+export interface AchievementsData {
+  level: number;
+  items: AchievementCard[];
+  unlockedCount: number;
+  total: number;
+  xpEarned: number; // XP from unlocked achievements
+  medals: StreakMedal[]; // newest first
+  medalCount: number;
+}

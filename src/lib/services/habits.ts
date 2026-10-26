@@ -8,11 +8,12 @@ import { LIMITS } from "@/lib/domain/defaults";
 import { AppError } from "@/lib/errors";
 import { connectDB } from "@/utils/connectDB";
 import type { CreateHabitInput, UpdateHabitInput } from "@/lib/validation/habit";
-import type { HabitRecord, PublicHabit } from "@/types/habit";
+import { HabitRecord, PublicHabit } from "@/types/habits";
+
 
 export type HabitStatus = "active" | "archived" | "all";
 
-function toPublicHabit(habit: HydratedDocument<HabitRecord>): PublicHabit {
+export function toPublicHabit(habit: HydratedDocument<HabitRecord>): PublicHabit {
   return {
     id: habit._id.toString(),
     name: habit.name,
@@ -193,7 +194,7 @@ export async function addExemptDate(
   const updated = await Habit.findOneAndUpdate(
     { _id: habitId, userId },
     { $addToSet: { exemptDates: date } },
-    { new: true },
+    { returnDocument: "after" },
   );
   if (!updated) throw new AppError("NOT_FOUND");
   return toPublicHabit(updated);
@@ -208,7 +209,7 @@ export async function removeExemptDate(
   const updated = await Habit.findOneAndUpdate(
     { _id: habitId, userId },
     { $pull: { exemptDates: date } },
-    { new: true },
+    { returnDocument: "after" },
   );
   if (!updated) throw new AppError("NOT_FOUND");
   return toPublicHabit(updated);

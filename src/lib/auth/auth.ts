@@ -131,6 +131,7 @@ export const authOptions: NextAuthOptions = {
       return true;
     },
     async jwt({ token, user, account }) {
+      if (account) token.provider = account.provider; // "credentials" or "google"
       if (user) {
         if (account?.provider === "google") {
           // For Google, user.id is Google's id. We need OUR database id.
@@ -148,6 +149,7 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (token.id) session.user.id = token.id;
+      session.user.provider = token.provider;
       return session;
     },
   },

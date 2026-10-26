@@ -1,10 +1,11 @@
 export type Theme = "system" | "light" | "dark";
 
 export const THEME_KEY = "theme";
+export const MOTION_KEY = "reduce-motion"; // "1" = reduce motion on this device
 
 // Runs in <head> before first paint to avoid a flash of the wrong theme.
 // "system" is represented by NO data-theme attribute (CSS follows prefers-color-scheme).
-export const themeInitScript = `(function(){try{var t=localStorage.getItem("${THEME_KEY}");if(t==="light"||t==="dark"){document.documentElement.dataset.theme=t}}catch(e){}})();`;
+export const themeInitScript = `(function(){try{var t=localStorage.getItem("${THEME_KEY}");if(t==="light"||t==="dark"){document.documentElement.dataset.theme=t}if(localStorage.getItem("${MOTION_KEY}")==="1"){document.documentElement.dataset.motion="reduce"}}catch(e){}})();`;
 
 const listeners = new Set<() => void>();
 
@@ -38,8 +39,9 @@ export function setTheme(theme: Theme) {
 export function subscribeTheme(notify: () => void) {
   listeners.add(notify);
   const onStorage = (event: StorageEvent) => {
-    if (event.key === THEME_KEY || event.key === null) {
+    if (event.key === THEME_KEY || event.key === MOTION_KEY || event.key === null) {
       applyTheme(getTheme());
+      applyMotion(getReduceMotion());
       notify();
     }
   };
@@ -48,4 +50,30 @@ export function subscribeTheme(notify: () => void) {
     listeners.delete(notify);
     window.removeEventListener("storage", onStorage);
   };
+}
+
+// ---- Reduce motion (kept on this device, like the theme) ----
+export function getReduceMotion(): boolean {
+  try {
+    return localStorage.getItem(MOTION_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function applyMotion(reduce: boolean) {
+  const root = document.documentElement;
+  if (reduce) root.dataset.motion = "reduce";
+  else delete root.dataset.motion;
+}
+
+export function setReduceMotion(reduce: boolean) {
+  try {
+    if (reduce) localStorage.setItem(MOTION_KEY, "1");
+    else localStorage.removeItem(MOTION_KEY);
+  } catch {
+    // Storage unavailable: still apply for this session.
+  }
+  applyMotion(reduce);
+  listeners.forEach((notify) => notify());
 }

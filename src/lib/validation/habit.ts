@@ -1,11 +1,7 @@
 import { z } from "zod";
-import { isValidDateKey } from "@/lib/domain/dates";
+import { dateKeySchema as dateKey } from "@/lib/validation/common";
 import { LIMITS } from "@/lib/domain/defaults";
 import type { Weekday } from "@/types/common";
-
-const dateKey = z
-  .string()
-  .refine(isValidDateKey, "Use a valid date in YYYY-MM-DD format.");
 
 const name = z
   .string()

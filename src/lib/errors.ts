@@ -2,11 +2,19 @@
 // Messages are deliberately generic where needed (e.g. login never says which
 // part was wrong, so it cannot be used to discover registered emails).
 export const APP_ERRORS = {
-      INVALID_DATA: { status: 400, message: "Please enter a valid email and password." },
+  INVALID_DATA: { status: 400, message: "Please enter a valid email and password." },
   NAME_AT_LEAST: { status: 400, message: "First name must be at least 3 characters." },
   LAST_NAME_AT_LEAST: { status: 400, message: "Last name must be at least 3 characters." },
   PASSWORD_AT_LEAST: { status: 400, message: "Password must be at least 8 characters." },
   LIMIT_REACHED: { status: 409, message: "You have reached the limit for this item." },
+  ALREADY_COMPLETED: { status: 409, message: "This habit is already completed today." },
+  NOT_AVAILABLE_TODAY: { status: 400, message: "This habit can't be completed today." },
+  INSUFFICIENT_GEMS: { status: 409, message: "You don't have enough gems for that." },
+  FREEZE_UNAVAILABLE: { status: 409, message: "You don't have a Streak Freeze to use." },
+  UNDO_BLOCKED: {
+    status: 409,
+    message: "You already spent these gems, so this completion can't be undone.",
+  },
   VALIDATION_FAILED: {
     status: 400,
     message: "Some fields are invalid. Please check them and try again.",

@@ -22,5 +22,25 @@ export const LIMITS = {
   maxRewardPrice: 10_000_000,
   maxMinutesPerDay: 1440,
   maxHabits: 100,
+  maxRewards: 100,
+  maxPurchaseNote: 200,
   maxExemptDates: 366,
 } as const;
+
+// ---- Streaks ----
+// How far back streaks are calculated. Older history is ignored for performance.
+export const STREAK_LOOKBACK_DAYS = 400;
+// A missed day can only be rescued with a Streak Freeze for this many days.
+export const FREEZE_WINDOW_DAYS = 3;
+export const STREAK_FREEZE_PRICE = 50; // gems per freeze (proposal: change here only)
+export const MAX_STREAK_FREEZES = 5; // most freezes a user can hold at once
+
+// ---- Streak bonuses (settings) ----
+export const MAX_MILESTONES = 10; // streak bonuses a user can define
+export const MAX_MILESTONE_GEMS = 10_000; // proposal: change here only
+// A streak is only counted STREAK_LOOKBACK_DAYS back, so a milestone beyond that
+// could never be reached.
+export const MAX_MILESTONE_DAYS = STREAK_LOOKBACK_DAYS;
+
+// ---- Streaks page ----
+export const STREAK_HISTORY_DAYS = 42; // the calendar on each habit: 6 weeks

@@ -18,10 +18,10 @@ export interface NavItem {
 
 export const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, ready: true },
-  { href: "/habits", label: "Habits", icon: ListChecks, ready: false },
-  { href: "/rewards", label: "Rewards", icon: Gift, ready: false },
-  { href: "/streaks", label: "Streaks", icon: Flame, ready: false },
-  { href: "/achievements", label: "Achievements", icon: Trophy, ready: false },
-  { href: "/stats", label: "Stats", icon: TrendingUp, ready: false },
-  { href: "/settings", label: "Settings", icon: Settings, ready: false },
+  { href: "/dashboard/habits", label: "Habits", icon: ListChecks, ready: true },
+  { href: "/dashboard/rewards", label: "Rewards", icon: Gift, ready: true },
+  { href: "/dashboard/streaks", label: "Streaks", icon: Flame, ready: true },
+  { href: "/dashboard/achievements", label: "Achievements", icon: Trophy, ready: true },
+  { href: "/dashboard/stats", label: "Stats", icon: TrendingUp, ready: true },
+  { href: "/dashboard/settings", label: "Settings", icon: Settings, ready: true },
 ];

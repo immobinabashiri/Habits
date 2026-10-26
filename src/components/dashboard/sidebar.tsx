@@ -51,7 +51,10 @@ export function Sidebar({ userName, collapsed, onToggleCollapse, onClose }: Side
       <nav aria-label="Dashboard" className="flex-1 overflow-y-auto px-3 py-2">
         <ul className="space-y-1">
           {NAV_ITEMS.map(({ href, label: text, icon: Icon, ready }) => {
-            const active = pathname === href || pathname.startsWith(`${href}/`);
+            const active =
+  href === "/dashboard"
+    ? pathname === href
+    : pathname === href || pathname.startsWith(`${href}/`);
             return (
               <li key={href}>
                 {ready ? (

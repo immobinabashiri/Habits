@@ -27,6 +27,7 @@
   --success-soft: #a8dcc5; /* completed fill */
   --warning: #8a6100;
   --destructive: #c0392b;
+  --destructive-foreground: #ffffff; /* text on a solid destructive button */
   --reward: #ffe69a; /* gems / achievements */
   --reward-foreground: #5a4a00;
 
@@ -66,6 +67,9 @@
     --success-soft: #2f5f4c;
     --warning: #e8b84a;
     --destructive: #f28b82;
+    --destructive-foreground: #2d1210;
+    --reward: #4d4017; /* softer than the light yellow so it does not glare */
+    --reward-foreground: #ffe69a;
 
     --glass: rgb(42 41 49 / 0.6);
     --glass-border: rgb(255 255 255 / 0.1);
@@ -101,6 +105,9 @@
   --success-soft: #2f5f4c;
   --warning: #e8b84a;
   --destructive: #f28b82;
+  --destructive-foreground: #2d1210;
+  --reward: #4d4017; /* softer than the light yellow so it does not glare */
+  --reward-foreground: #ffe69a;
 
   --glass: rgb(42 41 49 / 0.6);
   --glass-border: rgb(255 255 255 / 0.1);
@@ -131,6 +138,7 @@
   --color-success-soft: var(--success-soft);
   --color-warning: var(--warning);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-reward: var(--reward);
   --color-reward-foreground: var(--reward-foreground);
 
@@ -177,4 +185,13 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* The same rule, switched on by the "Reduce motion" setting. */
+:root[data-motion="reduce"] *,
+:root[data-motion="reduce"] *::before,
+:root[data-motion="reduce"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
 }

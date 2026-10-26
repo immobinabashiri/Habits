@@ -49,3 +49,42 @@ export interface PurchaseRecord {
   note: string;
   purchasedAt: Date;
 }
+
+// ---- What the browser receives (ids and dates are strings) ----
+
+export interface PublicReward {
+  id: string;
+  name: string;
+  icon: string;
+  description: string;
+  price: number; // gems
+  category: string;
+  favorite: boolean;
+  createdAt: string; // ISO
+  updatedAt: string; // ISO
+}
+
+export interface PublicPurchase {
+  id: string;
+  kind: PurchaseKind;
+  name: string;
+  icon: string;
+  category: string;
+  cost: number;
+  quantity: number;
+  note: string;
+  purchasedAt: string; // ISO
+}
+
+// Everything the Rewards page shows.
+export interface RewardsData {
+  rewards: PublicReward[];
+  purchases: PublicPurchase[]; // newest first
+  gems: number;
+  timezone: string;
+}
+
+export interface PurchaseResult {
+  purchase: PublicPurchase;
+  gems: number; // balance after paying
+}

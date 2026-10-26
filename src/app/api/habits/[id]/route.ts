@@ -1,29 +1,37 @@
 import { NextResponse } from "next/server";
-import { readJson, respond } from "@/lib/api/http";
+import { parseObjectId, readJson, respond } from "@/lib/api/http";
 import { requireUserId } from "@/lib/auth/session";
-import { createHabit, listHabits } from "@/lib/services/habits";
-import { createHabitSchema, listQuerySchema } from "@/lib/validation/habit";
+import { deleteHabit, getHabit, updateHabit } from "@/lib/services/habits";
+import { updateHabitSchema } from "@/lib/validation/habit";
 import { parseOrThrow } from "@/lib/validation/parse";
 
-// GET /api/habits?status=active|archived|all   (default: active)
-export function GET(request: Request) {
+type Context = { params: Promise<{ id: string }> };
+
+// GET /api/habits/:id
+export function GET(_request: Request, { params }: Context) {
   return respond(async () => {
     const userId = await requireUserId();
-    const { status } = parseOrThrow(listQuerySchema, {
-      status: new URL(request.url).searchParams.get("status") ?? undefined,
-    });
-    return NextResponse.json({ habits: await listHabits(userId, status ?? "active") });
+    const habitId = parseObjectId((await params).id);
+    return NextResponse.json({ habit: await getHabit(userId, habitId) });
   });
 }
 
-// POST /api/habits
-export function POST(request: Request) {
+// PATCH /api/habits/:id   (any subset of the editable fields)
+export function PATCH(request: Request, { params }: Context) {
   return respond(async () => {
     const userId = await requireUserId();
-    const input = parseOrThrow(createHabitSchema, await readJson(request));
-    return NextResponse.json(
-      { habit: await createHabit(userId, input) },
-      { status: 201 },
-    );
+    const habitId = parseObjectId((await params).id);
+    const input = parseOrThrow(updateHabitSchema, await readJson(request));
+    return NextResponse.json({ habit: await updateHabit(userId, habitId, input) });
+  });
+}
+
+// DELETE /api/habits/:id   (permanent; archive is the reversible option)
+export function DELETE(_request: Request, { params }: Context) {
+  return respond(async () => {
+    const userId = await requireUserId();
+    const habitId = parseObjectId((await params).id);
+    await deleteHabit(userId, habitId);
+    return new Response(null, { status: 204 });
   });
 }

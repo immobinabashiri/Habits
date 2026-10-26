@@ -1,26 +1,22 @@
+import { Types } from "mongoose";
 import type { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
+import { DashboardView } from "@/components/dashboard/dashboard-view";
 import { authOptions } from "@/lib/auth/auth";
+import { getDashboard } from "@/lib/services/dashboard";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
 export default async function DashboardPage() {
-  // Basic server-side check. A proper route guard comes in the next step.
   const session = await getServerSession(authOptions);
-  if (!session) redirect("/login");
+  const id = session?.user?.id;
+  if (!id || !Types.ObjectId.isValid(id)) redirect("/login");
 
-  return (
-    <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-      <h1 className="text-2xl font-bold tracking-tight">
-        Hi, {session.user.name}
-      </h1>
-      <p className="mt-2 max-w-xl text-muted-foreground">
-        This is your dashboard. Your habits, streaks and gems will appear here
-        in a later step.
-      </p>
-      <div className="mt-6">
-      </div>
-    </main>
-  );
+  // Server-side fetch: the first HTML already contains today's habits and streaks.
+  const data = await getDashboard(new Types.ObjectId(id));
+
+  // The key makes the view start fresh when the day or the time zone changes
+  // (midnight passing, or the browser time zone being adopted).
+  return <DashboardView key={`${data.today}:${data.timezone}`} initial={data} />;
 }
