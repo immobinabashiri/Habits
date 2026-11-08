@@ -1,0 +1,78 @@
+/* THEME: Classic Dark. Night glass with the same rose and lavender family. */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --background: #16151c;
+  --foreground: #f3f1f7;
+  --card: #25242d;
+  --card-foreground: #f3f1f7;
+  --popover: #25242d;
+  --popover-foreground: #f3f1f7;
+  --field: rgb(16 15 22 / 0.5);
+
+  --primary: #f4919f;
+  --primary-foreground: #2a1016;
+  --secondary: #393651;
+  --secondary-foreground: #ece8fb;
+  --accent: #c9b9f0;
+  --accent-foreground: #231d38;
+
+  --muted: #302f3a;
+  --muted-foreground: #b3b0bd;
+  --border: rgb(255 255 255 / 0.11);
+  --input: #7d7a8b;
+  --ring: #c9b9f0;
+  --overlay: rgb(4 3 8 / 0.62);
+
+  --success: #7fd1ae;
+  --success-soft: #24503f;
+  --warning: #e8b84a;
+  --destructive: #f4928a;
+  --destructive-foreground: #2d1210;
+  --reward: #4d4017;
+  --reward-foreground: #ffe69a;
+
+  /* Calendar activity types (icons and chip edges; 3:1 against cards) */
+  --cal-event: #f4919f;
+  --cal-workout: #fdba74;
+  --cal-task: #c9b9f0;
+  --cal-reminder: #7dd3fc;
+  --cal-note: #b3b0bd;
+  --cal-goal: #e8c35a;
+  --cal-habit: #7fd1ae;
+
+  --glass-1: rgb(44 42 54 / 0.58);
+  --glass-2: rgb(44 42 54 / 0.68);
+  --glass-3: rgb(37 36 45 / 0.92);
+  --glass-border: rgb(255 255 255 / 0.1);
+  --glass-edge: rgb(0 0 0 / 0.25);
+  --glass-highlight: rgb(255 255 255 / 0.08);
+  --glass-sheen: linear-gradient(145deg, rgb(255 255 255 / 0.05), rgb(255 255 255 / 0) 55%);
+  --blur-1: 14px;
+  --blur-2: 22px;
+  --blur-3: 30px;
+  --shadow-1: 0 4px 18px rgb(0 0 0 / 0.24);
+  --shadow-2: 0 10px 32px rgb(0 0 0 / 0.34);
+  --shadow-3: 0 24px 64px rgb(0 0 0 / 0.55);
+  --shadow-primary: 0 6px 18px rgb(244 145 159 / 0.22);
+
+  --gradient-primary: linear-gradient(135deg, #f6a0ab, #e98bb4);
+  --gradient-progress: linear-gradient(90deg, #f4919f, #c9b9f0);
+  --page-bg:
+    radial-gradient(56rem 38rem at 6% -8%, rgb(112 84 196 / 0.32), transparent 70%),
+    radial-gradient(50rem 34rem at 100% 12%, rgb(190 66 104 / 0.22), transparent 70%),
+    radial-gradient(60rem 38rem at 50% 112%, rgb(52 96 140 / 0.24), transparent 70%);
+
+  --r-sm: 0.5rem;
+  --r-md: 0.75rem;
+  --r-lg: 1rem;
+  --r-xl: 1.5rem;
+  --r-control: 0.75rem;
+
+  --font-body: var(--font-jakarta);
+  --font-display: var(--font-jakarta);
+  --heading-weight: 700;
+  --heading-tracking: -0.02em;
+
+  --hover-lift: -1px;
+}

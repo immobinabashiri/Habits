@@ -24,10 +24,10 @@ export function StreakGuard({ items, freezes, busy, onDecide }: StreakGuardProps
   return (
     <section
       aria-labelledby="guard-title"
-      className="space-y-3 rounded-xl border border-warning/50 bg-card p-4"
+      className="space-y-3 panel border-warning/50 p-4"
     >
       <div>
-        <h2 id="guard-title" className="flex items-center gap-2 font-bold tracking-tight">
+        <h2 id="guard-title" className="flex items-center gap-2 type-h3">
           <Flame className="size-5 text-warning" aria-hidden="true" />
           Streaks at risk
         </h2>
@@ -56,7 +56,7 @@ export function StreakGuard({ items, freezes, busy, onDecide }: StreakGuardProps
                   type="button"
                   disabled={busy || freezes === 0}
                   onClick={() => onDecide(habit.id, pendingFreeze.date, "frozen")}
-                  className="inline-flex min-h-11 items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
+                  className="btn btn-primary gap-2 px-4"
                 >
                   <Snowflake className="size-4" aria-hidden="true" />
                   Use a freeze ({freezes} left)
@@ -65,7 +65,7 @@ export function StreakGuard({ items, freezes, busy, onDecide }: StreakGuardProps
                   type="button"
                   disabled={busy}
                   onClick={() => onDecide(habit.id, pendingFreeze.date, "broken")}
-                  className="min-h-11 rounded-md px-4 text-sm font-semibold text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-50"
+                  className="btn btn-quiet px-4"
                 >
                   Let it break
                 </button>
@@ -97,19 +97,19 @@ export function FreezeShop({
   const poor = gems < price;
 
   return (
-    <section aria-labelledby="freeze-title" className="rounded-xl border border-border bg-card p-4">
-      <h2 id="freeze-title" className="flex items-center gap-2 font-bold tracking-tight">
-        <Snowflake className="size-5 text-accent-foreground" aria-hidden="true" />
+    <section aria-labelledby="freeze-title" className="panel p-4">
+      <h2 id="freeze-title" className="flex items-center gap-2 type-h3">
+        <Snowflake className="size-5 text-primary" aria-hidden="true" />
         Streak Freeze
       </h2>
       <p className="mt-1 text-sm text-muted-foreground">
-        Saves a streak after one missed day. You own {freezes} of {max}.
+        Saves a streak after a missed day. You own {freezes} of {max}.
       </p>
       <button
         type="button"
         onClick={onBuy}
         disabled={busy || full || poor}
-        className="mt-3 min-h-11 w-full rounded-md bg-secondary px-4 text-sm font-semibold text-secondary-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
+        className="btn btn-secondary mt-3 w-full px-4"
       >
         {full ? "You have the maximum" : `Buy for ${price} gems`}
       </button>

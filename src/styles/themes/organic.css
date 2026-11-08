@@ -1,0 +1,88 @@
+/* THEME: Organic. Deep lagoon, coral and seafoam. Glass floats over flowing waves (see backdrop.css). */
+[data-theme="organic"] {
+  color-scheme: dark;
+
+  --background: #0a2a2e;
+  --foreground: #effaf6;
+  --card: #123a3e;
+  --card-foreground: #effaf6;
+  --popover: #123a3e;
+  --popover-foreground: #effaf6;
+  --field: rgb(5 28 32 / 0.55);
+
+  --primary: #ffb8a0;
+  --primary-foreground: #3a1407;
+  --secondary: #1c5152;
+  --secondary-foreground: #d9f5ec;
+  --accent: #7fdcc4;
+  --accent-foreground: #06302c;
+
+  --muted: #17464a;
+  --muted-foreground: #b4d4cd;
+  --border: rgb(190 240 225 / 0.16);
+  --input: #6f9f99;
+  --ring: #ffd27a;
+  --overlay: rgb(2 18 20 / 0.62);
+
+  --success: #84e6ae;
+  --success-soft: #1a5a48;
+  --warning: #ffd27a;
+  --destructive: #ffa8a0;
+  --destructive-foreground: #3d0f0b;
+  --reward: #574314;
+  --reward-foreground: #ffe3a6;
+
+  /* Calendar activity types (icons and chip edges; 3:1 against cards) */
+  --cal-event: #ffb8a0;
+  --cal-workout: #ffa45c;
+  --cal-task: #c7b8ff;
+  --cal-reminder: #8fd3ff;
+  --cal-note: #b4d4cd;
+  --cal-goal: #ffe08a;
+  --cal-habit: #84e6ae;
+
+  --glass-1: rgb(16 62 66 / 0.62);
+  --glass-2: rgb(14 56 60 / 0.72);
+  --glass-3: rgb(16 54 58 / 0.94);
+  --glass-border: rgb(200 245 232 / 0.16);
+  --glass-edge: rgb(0 20 22 / 0.3);
+  --glass-highlight: rgb(220 255 245 / 0.12);
+  --glass-sheen: linear-gradient(150deg, rgb(127 220 196 / 0.09), rgb(255 163 133 / 0) 60%);
+  --blur-1: 18px;
+  --blur-2: 26px;
+  --blur-3: 34px;
+  --shadow-1: 0 8px 26px rgb(0 22 24 / 0.28);
+  --shadow-2: 0 14px 40px rgb(0 22 24 / 0.36);
+  --shadow-3: 0 28px 72px rgb(0 14 16 / 0.6);
+  --shadow-primary: 0 8px 22px rgb(255 184 160 / 0.22);
+
+  --gradient-primary: linear-gradient(120deg, #ffbfa8, #ffab9e);
+  --gradient-progress: linear-gradient(90deg, #7fdcc4, #ffb8a0);
+  --page-bg:
+    radial-gradient(58rem 42rem at 90% -6%, rgb(255 163 133 / 0.16), transparent 70%),
+    radial-gradient(60rem 44rem at 0% 30%, rgb(38 150 142 / 0.42), transparent 72%),
+    linear-gradient(170deg, #0c3236, #082327 70%);
+
+  --wave-1: rgb(127 220 196 / 0.1);
+  --wave-2: rgb(38 150 142 / 0.2);
+  --wave-3: rgb(255 163 133 / 0.06);
+
+  --r-sm: 0.625rem;
+  --r-md: 1rem;
+  --r-lg: 1.5rem;
+  --r-xl: 2.25rem;
+  --r-control: 1.125rem;
+  /* Panels are slightly irregular, like river stones */
+  --panel-shape: 2.25rem 1.625rem 2.5rem 1.75rem;
+
+  --font-body: var(--font-outfit);
+  --font-display: var(--font-fraunces);
+  --heading-weight: 600;
+  --heading-tracking: -0.01em;
+
+  --hover-lift: -2px;
+
+  --slider-track: 0.5625rem;
+  --slider-thumb: 1.5rem;
+  --slider-thumb-radius: 58% 42% 46% 54% / 52% 58% 42% 48%;
+}

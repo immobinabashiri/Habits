@@ -13,8 +13,8 @@ export function SettingsCard({
   children: ReactNode;
 }) {
   return (
-    <section aria-labelledby={`${id}-title`} className="rounded-xl border border-border bg-card p-5">
-      <h2 id={`${id}-title`} className="text-lg font-bold tracking-tight">
+    <section aria-labelledby={`${id}-title`} className="panel p-5">
+      <h2 id={`${id}-title`} className="type-h2">
         {title}
       </h2>
       <p className="mt-1 text-sm text-muted-foreground">{description}</p>
@@ -40,6 +40,6 @@ export function SaveStatus({ error, saved }: { error: string | null; saved: stri
 }
 
 export const primaryButton =
-  "inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60";
+  "btn btn-primary px-5";
 export const quietButton =
-  "inline-flex min-h-11 items-center justify-center gap-2 rounded-md px-4 text-sm font-semibold text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-60";
+  "btn btn-quiet px-4";

@@ -83,13 +83,13 @@ export function SignupForm() {
       {errors.form ? (
         <p
           role="alert"
-          className="rounded-md border border-destructive px-3 py-2 text-sm text-destructive"
+          className="alert alert-error"
         >
           {errors.form}
         </p>
       ) : null}
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <FormField
           id="signup-name"
           name="name"
@@ -133,7 +133,7 @@ export function SignupForm() {
         type="submit"
         disabled={pending}
         aria-busy={pending}
-        className="min-h-12 w-full rounded-md bg-primary font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
+        className="btn btn-primary min-h-12 w-full"
       >
         {pending ? "Creating account…" : "Create account"}
       </button>

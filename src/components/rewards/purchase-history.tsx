@@ -8,8 +8,8 @@ function formatWhen(iso: string, timeZone: string): string {
 
 export function PurchaseHistory({ purchases, timezone }: { purchases: PublicPurchase[]; timezone: string }) {
   return (
-    <section aria-labelledby="history-title" className="rounded-xl border border-border bg-card p-4">
-      <h2 id="history-title" className="font-bold tracking-tight">
+    <section aria-labelledby="history-title" className="panel p-4">
+      <h2 id="history-title" className="type-h3">
         Purchase history
       </h2>
       {purchases.length === 0 ? (
@@ -22,7 +22,7 @@ export function PurchaseHistory({ purchases, timezone }: { purchases: PublicPurc
             <li key={purchase.id} className="flex items-start gap-3 py-2.5">
               <span
                 aria-hidden="true"
-                className="mt-0.5 inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-secondary text-secondary-foreground"
+                className="mt-0.5 inline-flex size-8 shrink-0 items-center justify-center icon-bubble"
               >
                 <RewardIcon name={purchase.icon} className="size-4" />
               </span>

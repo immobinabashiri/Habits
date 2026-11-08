@@ -11,7 +11,7 @@ function describe(day: WeekDayInfo): string {
 export function WeekOverview({ week }: { week: WeekDayInfo[] }) {
   return (
     <section aria-labelledby="week-title" className="space-y-3">
-      <h2 id="week-title" className="text-lg font-bold tracking-tight">
+      <h2 id="week-title" className="type-h2">
         Last 7 days
       </h2>
       <ul className="grid grid-cols-7 gap-2">

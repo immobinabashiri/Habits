@@ -1,5 +1,6 @@
 import "server-only";
 import type { Types } from "mongoose";
+import { Habit } from "@/lib/db/models/habit";
 import { User } from "@/lib/db/models/user";
 import { levelFromXp } from "@/lib/domain/progress";
 import { AppError } from "@/lib/errors";
@@ -8,6 +9,17 @@ import { connectDB } from "@/utils/connectDB";
 export async function setTimezone(userId: Types.ObjectId, timezone: string): Promise<void> {
   await connectDB();
   const result = await User.updateOne({ _id: userId }, { $set: { "settings.timezone": timezone } });
+  if (result.matchedCount === 0) throw new AppError("UNAUTHENTICATED");
+}
+
+// Saves the user's own habit order. Only the user's own habits are kept, so another
+// account's ids can never be stored, and the list never grows past LIMITS.maxHabits.
+export async function setHabitOrder(userId: Types.ObjectId, habitIds: string[]): Promise<void> {
+  await connectDB();
+  const owned = await Habit.find({ userId, _id: { $in: habitIds } }).select("_id").lean<{ _id: Types.ObjectId }[]>();
+  const ownedIds = new Set(owned.map((habit) => habit._id.toString()));
+  const order = habitIds.filter((id) => ownedIds.has(id));
+  const result = await User.updateOne({ _id: userId }, { $set: { habitOrder: order } });
   if (result.matchedCount === 0) throw new AppError("UNAUTHENTICATED");
 }
 

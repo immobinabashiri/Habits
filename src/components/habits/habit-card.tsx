@@ -32,9 +32,7 @@ function ActionButton({ label, habitName, onClick, disabled, danger, children }:
       disabled={disabled}
       title={label}
       aria-label={`${label}: ${habitName}`}
-      className={`inline-flex size-11 items-center justify-center rounded-md text-muted-foreground transition-colors disabled:opacity-50 ${
-        danger ? "hover:bg-destructive/10 hover:text-destructive" : "hover:bg-muted hover:text-foreground"
-      }`}
+      className={`btn-icon ${danger ? "btn-icon-danger" : ""}`}
     >
       {children}
     </button>
@@ -48,14 +46,15 @@ export function HabitCard({ habit, busy, onEdit, onExempt, onToggleArchive, onDe
 
   return (
     <li
-      className={`flex flex-col rounded-lg border border-border p-4 text-card-foreground ${
-        archived ? "bg-muted/50" : "bg-card"
+      id={`habit-${habit.id}`} // the Calendar links here
+      className={`surface flex min-w-0 scroll-mt-24 flex-col p-4 target:outline-2 target:outline-offset-2 target:outline-primary ${
+        archived ? "bg-muted/50" : ""
       }`}
     >
       <div className="flex items-start gap-3">
         <span
           aria-hidden="true"
-          className="inline-flex size-11 shrink-0 items-center justify-center rounded-md bg-secondary text-secondary-foreground"
+          className="inline-flex size-11 shrink-0 items-center justify-center icon-tile"
         >
           <HabitIcon name={habit.icon} className="size-5" />
         </span>

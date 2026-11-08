@@ -61,7 +61,7 @@ export function ExemptDaysDialog({ habit, onClose, onChange }: ExemptDaysDialogP
     <div className="flex max-h-[90dvh] flex-col">
       <div className="flex items-start justify-between gap-3 border-b border-border px-5 py-3">
         <div className="min-w-0">
-          <h2 id="modal-title" className="text-lg font-bold tracking-tight">
+          <h2 id="modal-title" className="type-h2">
             Exempt days
           </h2>
           <p className="truncate text-sm text-muted-foreground">{habit.name}</p>
@@ -70,7 +70,7 @@ export function ExemptDaysDialog({ habit, onClose, onChange }: ExemptDaysDialogP
           type="button"
           onClick={onClose}
           aria-label="Close"
-          className="-mr-2 inline-flex size-11 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+          className="btn-icon -mr-2 shrink-0"
         >
           <X className="size-5" aria-hidden="true" />
         </button>
@@ -96,13 +96,13 @@ export function ExemptDaysDialog({ habit, onClose, onChange }: ExemptDaysDialogP
               disabled={busy !== null}
               aria-invalid={error ? true : undefined}
               aria-describedby={error ? "exempt-error" : undefined}
-              className="block min-h-11 min-w-0 flex-1 rounded-md border border-input bg-card px-3 text-base text-card-foreground disabled:opacity-60 aria-[invalid=true]:border-destructive"
+              className="field block min-h-11 min-w-0 flex-1"
             />
             <button
               type="submit"
               disabled={busy !== null}
               aria-busy={busy === "add"}
-              className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
+              className="btn btn-primary px-5"
             >
               {busy === "add" ? "Adding…" : "Add"}
             </button>
@@ -115,7 +115,7 @@ export function ExemptDaysDialog({ habit, onClose, onChange }: ExemptDaysDialogP
         </form>
 
         {dates.length === 0 ? (
-          <p className="rounded-md border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground">
+          <p className="empty-box px-4 py-6 text-center text-sm text-muted-foreground">
             No exempt days yet.
           </p>
         ) : (
@@ -129,7 +129,7 @@ export function ExemptDaysDialog({ habit, onClose, onChange }: ExemptDaysDialogP
                   disabled={busy !== null}
                   aria-label={`Remove ${formatDateKey(key)}`}
                   title="Remove"
-                  className="inline-flex size-11 items-center justify-center rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive disabled:opacity-50"
+                  className="btn-icon btn-icon-danger"
                 >
                   <X className="size-4" aria-hidden="true" />
                 </button>
@@ -143,7 +143,7 @@ export function ExemptDaysDialog({ habit, onClose, onChange }: ExemptDaysDialogP
         <button
           type="button"
           onClick={onClose}
-          className="min-h-11 rounded-md bg-secondary px-5 text-sm font-semibold text-secondary-foreground hover:opacity-90"
+          className="btn btn-secondary px-5"
         >
           Done
         </button>

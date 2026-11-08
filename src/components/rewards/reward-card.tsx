@@ -1,5 +1,6 @@
 import { Gem, Pencil, Star, Trash2 } from "lucide-react";
 import type { ReactNode } from "react";
+import { ProgressBar } from "@/components/ui/progress-bar";
 import { RewardIcon } from "@/components/rewards/reward-icons";
 import type { PublicReward } from "@/types/reward";
 
@@ -39,9 +40,7 @@ function IconButton({
       title={label}
       aria-label={`${label}: ${rewardName}`}
       aria-pressed={pressed}
-      className={`inline-flex size-11 items-center justify-center rounded-md text-muted-foreground transition-colors disabled:opacity-50 ${
-        danger ? "hover:bg-destructive/10 hover:text-destructive" : "hover:bg-muted hover:text-foreground"
-      }`}
+      className={`btn-icon ${danger ? "btn-icon-danger" : ""}`}
     >
       {children}
     </button>
@@ -54,11 +53,11 @@ export function RewardCard({ reward, gems, busy, onBuy, onEdit, onDelete, onTogg
   const hintId = `reward-hint-${reward.id}`;
 
   return (
-    <li className="flex flex-col rounded-lg border border-border bg-card p-4 text-card-foreground">
+    <li className="surface flex min-w-0 flex-col p-4">
       <div className="flex items-start gap-3">
         <span
           aria-hidden="true"
-          className="inline-flex size-11 shrink-0 items-center justify-center rounded-md bg-secondary text-secondary-foreground"
+          className="inline-flex size-11 shrink-0 items-center justify-center icon-tile"
         >
           <RewardIcon name={reward.icon} className="size-5" />
         </span>
@@ -100,20 +99,23 @@ export function RewardCard({ reward, gems, busy, onBuy, onEdit, onDelete, onTogg
         </div>
       </div>
 
+      {!affordable ? (
+        <div className="mt-4">
+          <ProgressBar value={gems / reward.price} label={`Gems saved toward ${reward.name}`} className="h-1.5" />
+          <p id={hintId} className="mt-1.5 text-xs text-muted-foreground">
+            {missing.toLocaleString("en-US")} more {missing === 1 ? "gem" : "gems"} to go
+          </p>
+        </div>
+      ) : null}
       <button
         type="button"
         onClick={onBuy}
         disabled={busy || !affordable}
         aria-describedby={affordable ? undefined : hintId}
-        className="mt-3 min-h-11 w-full rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
+        className="btn btn-primary mt-3 w-full px-4"
       >
         Buy
       </button>
-      {!affordable ? (
-        <p id={hintId} className="mt-2 text-center text-xs text-muted-foreground">
-          You need {missing.toLocaleString("en-US")} more {missing === 1 ? "gem" : "gems"}.
-        </p>
-      ) : null}
     </li>
   );
 }

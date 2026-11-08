@@ -5,6 +5,7 @@ import {
   DEFAULT_STREAK_MILESTONES,
   DEFAULT_TIMEZONE,
 } from "@/lib/domain/defaults";
+import { DEFAULT_TELEGRAM_PREFS } from "@/lib/domain/notifications";
 import type {
   PublicUser,
   StreakMilestone,
@@ -83,6 +84,41 @@ const goalsSchema = new Schema<UserGoals>(
   { _id: false },
 );
 
+// ---- Telegram ----
+const timedReminderSchema = (time: string, enabled: boolean) =>
+  new Schema(
+    {
+      enabled: { type: Boolean, default: enabled },
+      time: { type: String, default: time, match: /^([01]\d|2[0-3]):[0-5]\d$/ },
+    },
+    { _id: false },
+  );
+
+const telegramPrefsSchema = new Schema(
+  {
+    enabled: { type: Boolean, default: true },
+    habitReminder: { type: timedReminderSchema(DEFAULT_TELEGRAM_PREFS.habitReminder.time, DEFAULT_TELEGRAM_PREFS.habitReminder.enabled), default: () => ({}) },
+    incompleteReminder: { type: timedReminderSchema(DEFAULT_TELEGRAM_PREFS.incompleteReminder.time, DEFAULT_TELEGRAM_PREFS.incompleteReminder.enabled), default: () => ({}) },
+    dailySummary: { type: timedReminderSchema(DEFAULT_TELEGRAM_PREFS.dailySummary.time, DEFAULT_TELEGRAM_PREFS.dailySummary.enabled), default: () => ({}) },
+    calendarReminders: { type: Boolean, default: DEFAULT_TELEGRAM_PREFS.calendarReminders },
+  },
+  { _id: false },
+);
+
+const notificationsSchema = new Schema(
+  { telegram: { type: telegramPrefsSchema, default: () => ({}) } },
+  { _id: false },
+);
+
+const telegramLinkSchema = new Schema(
+  {
+    chatId: { type: Number, default: null },
+    username: { type: String, default: null, maxlength: 64 },
+    linkedAt: { type: Date, default: null },
+  },
+  { _id: false },
+);
+
 const userSchema = new Schema<UserRecord>(
   {
     email: {
@@ -109,8 +145,20 @@ const userSchema = new Schema<UserRecord>(
     wallet: { type: walletSchema, default: () => ({}) },
     goals: { type: goalsSchema, default: () => ({}) },
     seenLevel: { type: Number, default: 1, min: 1, validate: isInteger },
+    // Existing accounts have no list yet, which simply means "creation order".
+    habitOrder: { type: [{ type: Schema.Types.ObjectId, ref: "Habit" }], default: [] },
+    // Existing accounts read as "not connected" with the default preferences.
+    telegram: { type: telegramLinkSchema, default: () => ({}) },
+    notifications: { type: notificationsSchema, default: () => ({}) },
   },
   { timestamps: true }, // adds createdAt / updatedAt
+);
+
+// One Telegram chat can belong to one account only (the race guard for linking).
+// Partial, so the many unlinked accounts (chatId null) don't collide.
+userSchema.index(
+  { "telegram.chatId": 1 },
+  { unique: true, partialFilterExpression: { "telegram.chatId": { $type: "number" } } },
 );
 
 // In development, hot reload re-runs this file. Reuse the existing model

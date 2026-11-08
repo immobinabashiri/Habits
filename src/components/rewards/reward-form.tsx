@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { FormField } from "@/components/auth/form-field";
-import { REWARD_ICON_KEYS, RewardIcon } from "@/components/rewards/reward-icons";
+import { REWARD_ICON_KEYS, REWARD_ICON_LABELS, RewardIcon } from "@/components/rewards/reward-icons";
 import {
   buildRewardInput,
   draftFromReward,
@@ -26,7 +26,7 @@ interface RewardFormProps {
 }
 
 const chipFace =
-  "inline-flex items-center justify-center rounded-md border border-input bg-card text-sm font-medium transition-colors peer-checked:border-primary peer-checked:bg-primary peer-checked:text-primary-foreground peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ring peer-disabled:opacity-60";
+  "inline-flex items-center justify-center rounded-md border border-input bg-field text-sm font-medium transition hover:border-primary active:scale-95 peer-checked:border-primary peer-checked:bg-primary peer-checked:text-primary-foreground peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ring peer-disabled:opacity-60";
 
 export function RewardForm({ reward, preset, categories, onClose, onSaved }: RewardFormProps) {
   const router = useRouter();
@@ -73,14 +73,14 @@ export function RewardForm({ reward, preset, categories, onClose, onSaved }: Rew
   return (
     <form onSubmit={handleSubmit} noValidate className="flex max-h-[90dvh] flex-col">
       <div className="flex items-center justify-between border-b border-border px-5 py-3">
-        <h2 id="modal-title" className="text-lg font-bold tracking-tight">
+        <h2 id="modal-title" className="type-h2">
           {reward ? "Edit reward" : "New reward"}
         </h2>
         <button
           type="button"
           onClick={onClose}
           aria-label="Close"
-          className="-mr-2 inline-flex size-11 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+          className="btn-icon -mr-2"
         >
           <X className="size-5" aria-hidden="true" />
         </button>
@@ -88,7 +88,7 @@ export function RewardForm({ reward, preset, categories, onClose, onSaved }: Rew
 
       <div className="space-y-5 overflow-y-auto px-5 py-5">
         {errors.form ? (
-          <p role="alert" className="rounded-md border border-destructive px-3 py-2 text-sm text-destructive">
+          <p role="alert" className="alert alert-error">
             {errors.form}
           </p>
         ) : null}
@@ -157,7 +157,7 @@ export function RewardForm({ reward, preset, categories, onClose, onSaved }: Rew
             disabled={pending}
             aria-invalid={errors.description ? true : undefined}
             aria-describedby={errors.description ? "reward-description-error" : undefined}
-            className="block w-full resize-none rounded-md border border-input bg-card px-3 py-2 text-base text-card-foreground placeholder:text-muted-foreground disabled:opacity-60 aria-[invalid=true]:border-destructive"
+            className="field block w-full resize-none py-2"
           />
           {errors.description ? (
             <p id="reward-description-error" className="text-sm text-destructive">
@@ -168,9 +168,9 @@ export function RewardForm({ reward, preset, categories, onClose, onSaved }: Rew
 
         <fieldset className="space-y-2">
           <legend className="text-sm font-medium">Icon</legend>
-          <div className="flex flex-wrap gap-2">
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(2.75rem,1fr))] gap-2">
             {REWARD_ICON_KEYS.map((key) => (
-              <label key={key} className="cursor-pointer" title={key}>
+              <label key={key} className="cursor-pointer" title={REWARD_ICON_LABELS[key]}>
                 <input
                   type="radio"
                   name="icon"
@@ -180,9 +180,9 @@ export function RewardForm({ reward, preset, categories, onClose, onSaved }: Rew
                   disabled={pending}
                   className="peer sr-only"
                 />
-                <span className={`${chipFace} size-11`}>
+                <span className={`${chipFace} h-11 w-full`}>
                   <RewardIcon name={key} className="size-5" />
-                  <span className="sr-only">{key}</span>
+                  <span className="sr-only">{REWARD_ICON_LABELS[key]}</span>
                 </span>
               </label>
             ))}
@@ -195,7 +195,7 @@ export function RewardForm({ reward, preset, categories, onClose, onSaved }: Rew
             checked={draft.favorite}
             onChange={(e) => set("favorite", e.target.checked)}
             disabled={pending}
-            className="size-5 accent-primary"
+            className="switch"
           />
           <span className="flex items-center gap-2 text-sm font-medium">
             <Star className="size-4 text-muted-foreground" aria-hidden="true" />
@@ -208,7 +208,7 @@ export function RewardForm({ reward, preset, categories, onClose, onSaved }: Rew
         <button
           type="button"
           onClick={onClose}
-          className="min-h-11 rounded-md px-4 text-sm font-semibold text-muted-foreground hover:bg-muted hover:text-foreground"
+          className="btn btn-quiet px-4"
         >
           Cancel
         </button>
@@ -216,7 +216,7 @@ export function RewardForm({ reward, preset, categories, onClose, onSaved }: Rew
           type="submit"
           disabled={pending}
           aria-busy={pending}
-          className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
+          className="btn btn-primary px-5"
         >
           {pending ? "Saving…" : reward ? "Save changes" : "Add reward"}
         </button>

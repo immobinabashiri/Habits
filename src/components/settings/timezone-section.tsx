@@ -74,7 +74,7 @@ export function TimezoneSection({ timezone, options }: TimezoneSectionProps) {
               setMessage(null);
             }}
             disabled={pending}
-            className="block min-h-11 w-full rounded-md border border-input bg-card px-3 text-base text-card-foreground disabled:opacity-60"
+            className="field block min-h-11 w-full"
           >
             {options.map((zone) => (
               <option key={zone} value={zone}>

@@ -53,7 +53,7 @@ export function LoginForm() {
       {errors.form ? (
         <p
           role="alert"
-          className="rounded-md border border-destructive px-3 py-2 text-sm text-destructive"
+          className="alert alert-error"
         >
           {errors.form}
         </p>
@@ -84,7 +84,7 @@ export function LoginForm() {
         type="submit"
         disabled={pending}
         aria-busy={pending}
-        className="min-h-12 w-full rounded-md bg-primary font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
+        className="btn btn-primary min-h-12 w-full"
       >
         {pending ? "Logging in…" : "Log in"}
       </button>

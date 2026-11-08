@@ -14,7 +14,7 @@ function Toast({ message, onDismiss }: { message: ToastMessage; onDismiss: (id: 
   }, [message.id, onDismiss]);
 
   return (
-    <li className="glass rounded-lg px-4 py-2.5 text-sm font-semibold text-card-foreground">
+    <li className="glass toast-in rounded-lg px-4 py-2.5 text-sm font-semibold">
       {message.text}
     </li>
   );
@@ -32,7 +32,7 @@ export function RewardToasts({
     <ul
       role="status"
       aria-live="polite"
-      className="pointer-events-none fixed inset-x-4 bottom-4 z-[60] mx-auto flex max-w-sm flex-col gap-2"
+      className="pointer-events-none fixed inset-x-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-[60] mx-auto flex max-w-sm flex-col gap-2"
     >
       {messages.map((message) => (
         <Toast key={message.id} message={message} onDismiss={onDismiss} />

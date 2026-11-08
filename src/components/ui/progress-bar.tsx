@@ -13,9 +13,9 @@ export function ProgressBar({ value, label, className = "" }: ProgressBarProps) 
       aria-valuemin={0}
       aria-valuemax={100}
       aria-valuenow={percent}
-      className={`h-2 overflow-hidden rounded-full bg-muted ${className}`}
+      className={`progress-track h-2 ${className}`}
     >
-      <div className="h-full rounded-full bg-primary transition-[width] duration-500" style={{ width: `${percent}%` }} />
+      <div className="progress-fill" style={{ width: `${percent}%` }} />
     </div>
   );
 }

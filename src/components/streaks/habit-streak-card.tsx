@@ -23,11 +23,11 @@ export function HabitStreakCard({
   const left = nextMilestone ? nextMilestone.days - streak : 0;
 
   return (
-    <li className="flex flex-col gap-4 rounded-xl border border-border bg-card p-4 text-card-foreground">
+    <li className="panel flex flex-col gap-4 p-4">
       <div className="flex items-start gap-3">
         <span
           aria-hidden="true"
-          className="inline-flex size-11 shrink-0 items-center justify-center rounded-md bg-secondary text-secondary-foreground"
+          className="inline-flex size-11 shrink-0 items-center justify-center icon-tile"
         >
           <HabitIcon name={habit.icon} className="size-5" />
         </span>

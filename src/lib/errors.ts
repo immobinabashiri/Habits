@@ -34,6 +34,10 @@ export const APP_ERRORS = {
     status: 429,
     message: "Too many attempts. Please wait a moment and try again.",
   },
+  TELEGRAM_NOT_CONFIGURED: {
+    status: 503,
+    message: "Telegram notifications aren't set up on this server yet.",
+  },
   SERVICE_UNAVAILABLE: {
     status: 503,
     message: "The service is temporarily unavailable. Please try again shortly.",

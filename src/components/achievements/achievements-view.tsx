@@ -22,8 +22,8 @@ function Card({ item }: { item: AchievementCard }) {
   const left = item.progress ? item.progress.target - item.progress.current : 0;
   return (
     <li
-      className={`flex gap-4 rounded-xl border p-4 ${
-        item.unlocked ? "border-success/50 bg-success-soft/30" : "border-border bg-card"
+      className={`panel flex gap-4 p-4 ${
+        item.unlocked ? "border-success/50 bg-success-soft/30" : ""
       }`}
     >
       <span
@@ -78,8 +78,8 @@ export function AchievementsView({ data, filter }: { data: AchievementsData; fil
   const complete = data.unlockedCount === data.total;
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-      <h1 className="text-2xl font-bold tracking-tight">Achievements</h1>
+    <div className="page">
+      <h1 className="type-h1">Achievements</h1>
       <p className="mt-1 text-muted-foreground">Milestones you unlock by showing up. Each one pays XP once.</p>
 
       <section aria-label="Your progress" className="glass mt-6 flex flex-col gap-4 rounded-xl p-5 sm:flex-row sm:items-center">
@@ -103,25 +103,23 @@ export function AchievementsView({ data, filter }: { data: AchievementsData; fil
         <dl className="grid shrink-0 grid-cols-2 gap-x-6 text-sm sm:text-right">
           <div>
             <dt className="text-muted-foreground">Level</dt>
-            <dd className="text-xl font-bold">{data.level}</dd>
+            <dd className="type-stat">{data.level}</dd>
           </div>
           <div>
             <dt className="text-muted-foreground">Streak bonuses</dt>
-            <dd className="text-xl font-bold">{data.medalCount}</dd>
+            <dd className="type-stat">{data.medalCount}</dd>
           </div>
         </dl>
       </section>
 
       <nav aria-label="Show achievements" className="mt-6">
-        <ul className="glass inline-flex rounded-full p-1">
+        <ul className="segmented">
           {ACHIEVEMENT_FILTERS.map(({ value, label }) => (
             <li key={value}>
               <Link
                 href={value === "all" ? "/dashboard/achievements" : `/dashboard/achievements?show=${value}`}
                 aria-current={filter === value ? "page" : undefined}
-                className={`inline-flex min-h-9 items-center rounded-full px-4 text-sm font-medium transition-colors ${
-                  filter === value ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
-                }`}
+                className="segmented-item"
               >
                 {label} ({counts[value]})
               </Link>
@@ -131,11 +129,11 @@ export function AchievementsView({ data, filter }: { data: AchievementsData; fil
       </nav>
 
       {shown.length === 0 ? (
-        <p className="mt-4 rounded-lg border border-dashed border-border px-6 py-12 text-center text-muted-foreground">
+        <p className="mt-4 empty-box px-6 py-12 text-center text-muted-foreground">
           {filter === "unlocked" ? "Nothing unlocked yet. Complete a habit to get your first one." : "Nothing left to unlock."}
         </p>
       ) : (
-        <ul className="mt-4 grid gap-4 md:grid-cols-2">
+        <ul className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
           {shown.map((item) => (
             <Card key={item.key} item={item} />
           ))}
@@ -143,7 +141,7 @@ export function AchievementsView({ data, filter }: { data: AchievementsData; fil
       )}
 
       <section aria-labelledby="medals-title" className="mt-10">
-        <h2 id="medals-title" className="flex items-center gap-2 text-lg font-bold tracking-tight">
+        <h2 id="medals-title" className="flex items-center gap-2 type-h2">
           <Flame className="size-5 text-primary" aria-hidden="true" />
           Streak bonuses earned
         </h2>
@@ -153,9 +151,9 @@ export function AchievementsView({ data, filter }: { data: AchievementsData; fil
           </p>
         ) : (
           <>
-            <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+            <ul className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
               {data.medals.map((medal) => (
-                <li key={medal.id} className="flex items-center justify-between gap-3 rounded-lg border border-border bg-card px-4 py-3">
+                <li key={medal.id} className="flex items-center justify-between gap-3 surface px-4 py-3">
                   <span className="flex min-w-0 items-center gap-2 text-sm font-medium">
                     <Sparkles className="size-4 shrink-0 text-reward-foreground" aria-hidden="true" />
                     <span className="truncate">{medal.title}</span>

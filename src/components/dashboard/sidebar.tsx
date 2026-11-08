@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { LogoMark } from "@/components/layout/logo";
+import { ThemeMenu } from "@/components/layout/theme-toggle";
 import { NAV_ITEMS } from "@/components/dashboard/nav-items";
 
 interface SidebarProps {
@@ -33,16 +34,16 @@ export function Sidebar({ userName, collapsed, onToggleCollapse, onClose }: Side
         <Link
           href="/dashboard"
           onClick={onClose}
-          className="flex items-center gap-2 rounded-md font-bold tracking-tight"
+          className="brand flex min-h-11 items-center gap-2 rounded-md"
         >
           <LogoMark />
-          <span className={label}>Gem Habits</span>
+          <span className={label}>Dayfacet</span>
         </Link>
         <button
           type="button"
           onClick={onClose}
           aria-label="Close menu"
-          className="inline-flex size-11 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground lg:hidden"
+          className="btn-icon lg:hidden"
         >
           <X className="size-5" aria-hidden="true" />
         </button>
@@ -110,6 +111,12 @@ export function Sidebar({ userName, collapsed, onToggleCollapse, onClose }: Side
           )}
           <span className={label}>Collapse</span>
         </button>
+
+        <ThemeMenu
+          placement="above"
+          buttonClassName={`${itemBase} ${centered} text-muted-foreground hover:bg-muted hover:text-foreground`}
+          labelClassName={label}
+        />
 
         <div className={`flex min-h-11 items-center gap-3 px-3 ${centered}`}>
           <span

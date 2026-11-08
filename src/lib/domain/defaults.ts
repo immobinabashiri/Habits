@@ -44,3 +44,18 @@ export const MAX_MILESTONE_DAYS = STREAK_LOOKBACK_DAYS;
 
 // ---- Streaks page ----
 export const STREAK_HISTORY_DAYS = 42; // the calendar on each habit: 6 weeks
+
+// ---- Calendar ----
+export const CALENDAR_LIMITS = {
+  maxItems: 3000, // calendar items per user, repeating series count once
+  maxTitle: 80,
+  maxNotes: 1000,
+  maxInterval: 99, // "every 99 weeks"
+  maxItemDates: 1000, // checked-off or removed days kept on one series
+  maxPriorities: 5, // weekly priorities
+  maxPriorityText: 120,
+  maxTemplates: 12,
+  maxTemplateEntries: 60,
+  maxTemplateName: 40,
+  maxOverdue: 20, // overdue tasks shown in the overview
+} as const;

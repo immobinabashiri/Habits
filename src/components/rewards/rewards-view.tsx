@@ -103,7 +103,7 @@ export function RewardsView({ initial }: { initial: RewardsData }) {
     <button
       type="button"
       onClick={() => setDialog({ type: "form", rewardId: null })}
-      className="inline-flex min-h-11 items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+      className="btn btn-primary gap-2 px-4"
     >
       <Plus className="size-5" aria-hidden="true" />
       Add reward
@@ -116,10 +116,10 @@ export function RewardsView({ initial }: { initial: RewardsData }) {
   ];
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
+    <div className="page">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Rewards</h1>
+          <h1 className="type-h1">Rewards</h1>
           <p className="mt-1 text-muted-foreground">Spend your gems on things you actually enjoy.</p>
         </div>
         <div className="flex items-center gap-3">
@@ -137,14 +137,14 @@ export function RewardsView({ initial }: { initial: RewardsData }) {
       {error ? (
         <div
           role="alert"
-          className="mt-6 flex items-start justify-between gap-3 rounded-md border border-destructive px-3 py-2 text-sm text-destructive"
+          className="mt-6 flex items-start justify-between gap-3 alert alert-error"
         >
           <p className="py-1.5">{error}</p>
           <button
             type="button"
             onClick={() => setError(null)}
             aria-label="Dismiss"
-            className="-my-1 -mr-2 inline-flex size-11 shrink-0 items-center justify-center rounded-md hover:bg-destructive/10"
+            className="btn-icon btn-icon-danger -my-1 -mr-2 shrink-0"
           >
             <X className="size-4" aria-hidden="true" />
           </button>
@@ -154,7 +154,7 @@ export function RewardsView({ initial }: { initial: RewardsData }) {
       {notice ? (
         <div
           role="status"
-          className="mt-6 flex items-start justify-between gap-3 rounded-md border border-success/50 bg-success-soft/40 px-3 py-2 text-sm"
+          className="mt-6 flex items-start justify-between gap-3 alert alert-success"
         >
           <p className="flex items-center gap-2 py-1.5">
             <PartyPopper className="size-4 shrink-0" aria-hidden="true" />
@@ -164,28 +164,24 @@ export function RewardsView({ initial }: { initial: RewardsData }) {
             type="button"
             onClick={() => setNotice(null)}
             aria-label="Dismiss"
-            className="-my-1 -mr-2 inline-flex size-11 shrink-0 items-center justify-center rounded-md hover:bg-muted"
+            className="btn-icon -my-1 -mr-2 shrink-0"
           >
             <X className="size-4" aria-hidden="true" />
           </button>
         </div>
       ) : null}
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <div className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <section aria-label="Your rewards">
           {rewards.length > 0 ? (
-            <div role="group" aria-label="Show rewards" className="glass inline-flex rounded-full p-1">
+            <div role="group" aria-label="Show rewards" className="segmented">
               {FILTERS.map(({ value, label, count }) => (
                 <button
                   key={value}
                   type="button"
                   onClick={() => setFilter(value)}
                   aria-pressed={filter === value}
-                  className={`min-h-9 rounded-full px-4 text-sm font-medium transition-colors ${
-                    filter === value
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
+                  className="segmented-item"
                 >
                   {label} ({count})
                 </button>
@@ -194,15 +190,15 @@ export function RewardsView({ initial }: { initial: RewardsData }) {
           ) : null}
 
           {rewards.length === 0 ? (
-            <div className="flex flex-col items-center gap-4 rounded-lg border border-dashed border-border px-6 py-14 text-center">
+            <div className="flex flex-col items-center gap-4 empty-box px-6 py-14 text-center">
               <span
                 aria-hidden="true"
-                className="inline-flex size-14 items-center justify-center rounded-full bg-secondary text-secondary-foreground"
+                className="inline-flex size-14 items-center justify-center icon-bubble"
               >
                 <Gift className="size-7" />
               </span>
               <div>
-                <h2 className="text-lg font-semibold">Your shop is empty</h2>
+                <h2 className="type-h2">Your shop is empty</h2>
                 <p className="mt-1 max-w-sm text-muted-foreground">
                   Add the rewards you would love to earn, set a price in gems, and buy them when you
                   have saved enough.
@@ -228,11 +224,11 @@ export function RewardsView({ initial }: { initial: RewardsData }) {
               </div>
             </div>
           ) : visible.length === 0 ? (
-            <p className="mt-4 rounded-lg border border-dashed border-border px-6 py-12 text-center text-muted-foreground">
+            <p className="mt-4 empty-box px-6 py-12 text-center text-muted-foreground">
               No favorites yet. Tap the star on a reward to pin it here.
             </p>
           ) : (
-            <ul className="mt-4 grid gap-4 sm:grid-cols-2">
+            <ul className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
               {visible.map((reward) => (
                 <RewardCard
                   key={reward.id}

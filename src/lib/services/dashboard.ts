@@ -7,6 +7,7 @@ import { Transaction } from "@/lib/db/models/transaction";
 import { User } from "@/lib/db/models/user";
 import { ACHIEVEMENTS } from "@/lib/domain/achievements";
 import { addDays, todayKey, weekdayOf } from "@/lib/domain/dates";
+import { applyOrder } from "@/lib/domain/habit-order";
 import {
   FREEZE_WINDOW_DAYS,
   LIMITS,
@@ -100,7 +101,10 @@ export async function getDashboard(userId: Types.ObjectId): Promise<DashboardDat
     .map(({ days, gems }) => ({ days, gems }))
     .sort((a, b) => a.days - b.days);
 
-  const items: DashboardHabit[] = habits.map((doc) => {
+  // The user's own order (habits never reordered keep creation order).
+  const ordered = applyOrder(habits, user.habitOrder.map((id) => id.toString()), (doc) => doc._id.toString());
+
+  const items: DashboardHabit[] = ordered.map((doc) => {
     const habit = toPublicHabit(doc);
     const done = doneByHabit.get(habit.id) ?? new Map<DateKey, CompletionRow>();
     const spec = {

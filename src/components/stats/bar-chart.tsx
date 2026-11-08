@@ -1,3 +1,5 @@
+import { ChevronDown } from "lucide-react";
+
 // A small accessible bar chart made of plain HTML (no chart library, no client JS).
 // Every chart has a text summary for screen readers and a "show as table" fallback,
 // so nothing depends on seeing the bars or telling colours apart.
@@ -31,9 +33,9 @@ export function BarChart({ title, summary, bars, series, mode }: BarChartProps) 
   const labelEvery = Math.ceil(bars.length / 7); // never more than about 7 labels
 
   return (
-    <figure className="rounded-xl border border-border bg-card p-4">
+    <figure className="panel p-4">
       <figcaption className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-        <span className="font-bold tracking-tight">{title}</span>
+        <span className="type-h3">{title}</span>
         <ul className="flex flex-wrap gap-x-4 text-xs text-muted-foreground" aria-label="Legend">
           {series.map((item) => (
             <li key={item.name} className="inline-flex items-center gap-1.5">
@@ -50,7 +52,7 @@ export function BarChart({ title, summary, bars, series, mode }: BarChartProps) 
         </p>
         <div aria-hidden="true" className="flex h-36 items-end gap-px border-b border-border sm:gap-0.5">
           {bars.map((bar) => (
-            <div key={bar.caption} title={bar.caption} className="flex h-full min-w-0 flex-1 items-end justify-center">
+            <div key={bar.caption} title={bar.caption} className="flex h-full min-w-0 flex-1 items-end justify-center rounded-t-sm transition-colors hover:bg-muted/70">
               {mode === "overlay" ? (
                 <div className="relative h-full w-full">
                   <div
@@ -85,15 +87,16 @@ export function BarChart({ title, summary, bars, series, mode }: BarChartProps) 
         </div>
       </div>
 
-      <details className="mt-2">
-        <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary">
+      <details className="group mt-2">
+        <summary className="inline-flex min-h-11 cursor-pointer items-center gap-1.5 rounded-md text-sm font-semibold text-primary">
+          <ChevronDown className="size-4 transition-transform group-open:rotate-180" aria-hidden="true" />
           Show as a table
         </summary>
         <div className="max-h-64 overflow-auto">
           <table className="w-full text-left text-sm">
             <caption className="sr-only">{title}</caption>
             <thead>
-              <tr className="border-b border-border text-muted-foreground">
+              <tr className="sticky top-0 border-b border-border bg-card text-muted-foreground">
                 <th scope="col" className="py-1.5 pr-3 font-medium">
                   Period
                 </th>
@@ -106,7 +109,7 @@ export function BarChart({ title, summary, bars, series, mode }: BarChartProps) 
             </thead>
             <tbody>
               {bars.map((bar) => (
-                <tr key={bar.caption} className="border-b border-border/60">
+                <tr key={bar.caption} className="border-b border-border transition-colors hover:bg-muted/50">
                   <th scope="row" className="py-1.5 pr-3 font-normal">
                     {bar.caption}
                   </th>

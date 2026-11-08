@@ -4,8 +4,8 @@ import type { StreakMilestone } from "@/types/user";
 
 export function MilestonesPanel({ milestones }: { milestones: StreakMilestone[] }) {
   return (
-    <section aria-labelledby="bonuses-title" className="rounded-xl border border-border bg-card p-4">
-      <h2 id="bonuses-title" className="font-bold tracking-tight">
+    <section aria-labelledby="bonuses-title" className="panel p-4">
+      <h2 id="bonuses-title" className="type-h3">
         Streak bonuses
       </h2>
       {milestones.length === 0 ? (

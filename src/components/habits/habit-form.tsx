@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import { FormField } from "@/components/auth/form-field";
-import { HABIT_ICON_KEYS, HabitIcon } from "@/components/habits/habit-icons";
+import { SliderField } from "@/components/ui/slider";
+import { HABIT_ICON_KEYS, HABIT_ICON_LABELS, HabitIcon } from "@/components/habits/habit-icons";
 import { buildHabitInput, draftFromHabit, INITIAL_DRAFT } from "@/components/habits/habit-draft";
 import type { FormErrors, HabitDraft } from "@/components/habits/habit-draft";
 import { ApiClientError, createHabitRequest, updateHabitRequest } from "@/lib/api/habits-client";
@@ -28,7 +29,7 @@ const KINDS: { value: HabitKind; title: string; hint: string }[] = [
 // Shared look of a selectable chip. The real input is visually hidden (sr-only)
 // but stays focusable, so keyboard and screen readers work natively.
 const chipFace =
-  "inline-flex items-center justify-center rounded-md border border-input bg-card text-sm font-medium transition-colors peer-checked:border-primary peer-checked:bg-primary peer-checked:text-primary-foreground peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ring peer-disabled:opacity-60";
+  "inline-flex items-center justify-center rounded-md border border-input bg-field text-sm font-medium transition hover:border-primary active:scale-95 peer-checked:border-primary peer-checked:bg-primary peer-checked:text-primary-foreground peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ring peer-disabled:opacity-60";
 
 function Fieldset({ legend, error, children }: { legend: string; error?: string; children: ReactNode }) {
   return (
@@ -99,14 +100,14 @@ export function HabitForm({ habit, onClose, onSaved }: HabitFormProps) {
   return (
     <form onSubmit={handleSubmit} noValidate className="flex max-h-[90dvh] flex-col">
       <div className="flex items-center justify-between border-b border-border px-5 py-3">
-        <h2 id="modal-title" className="text-lg font-bold tracking-tight">
+        <h2 id="modal-title" className="type-h2">
           {habit ? "Edit habit" : "New habit"}
         </h2>
         <button
           type="button"
           onClick={onClose}
           aria-label="Close"
-          className="-mr-2 inline-flex size-11 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+          className="btn-icon -mr-2"
         >
           <X className="size-5" aria-hidden="true" />
         </button>
@@ -114,7 +115,7 @@ export function HabitForm({ habit, onClose, onSaved }: HabitFormProps) {
 
       <div className="space-y-5 overflow-y-auto px-5 py-5">
         {errors.form ? (
-          <p role="alert" className="rounded-md border border-destructive px-3 py-2 text-sm text-destructive">
+          <p role="alert" className="alert alert-error">
             {errors.form}
           </p>
         ) : null}
@@ -158,10 +159,10 @@ export function HabitForm({ habit, onClose, onSaved }: HabitFormProps) {
         </Fieldset>
 
         <Fieldset legend="Icon">
-          <div className="flex flex-wrap gap-2">
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(2.75rem,1fr))] gap-2">
             {HABIT_ICON_KEYS.map((key) => {
               return (
-                <label key={key} className="cursor-pointer" title={key}>
+                <label key={key} className="cursor-pointer" title={HABIT_ICON_LABELS[key]}>
                   <input
                     type="radio"
                     name="icon"
@@ -171,9 +172,9 @@ export function HabitForm({ habit, onClose, onSaved }: HabitFormProps) {
                     disabled={pending}
                     className="peer sr-only"
                   />
-                  <span className={`${chipFace} size-11`}>
+                  <span className={`${chipFace} h-11 w-full`}>
                     <HabitIcon name={key} className="size-5" />
-                    <span className="sr-only">{key}</span>
+                    <span className="sr-only">{HABIT_ICON_LABELS[key]}</span>
                   </span>
                 </label>
               );
@@ -201,31 +202,27 @@ export function HabitForm({ habit, onClose, onSaved }: HabitFormProps) {
           </div>
         </Fieldset>
 
-        <div className={`grid gap-4 ${bonus ? "grid-cols-2" : "grid-cols-1"}`}>
-          <FormField
+        <div className={`grid gap-4 ${bonus ? "sm:grid-cols-2" : ""}`}>
+          <SliderField
             id="habit-xp"
-            name="xp"
             label="XP per completion"
-            type="number"
-            inputMode="numeric"
+            unit="XP"
             min={0}
             max={LIMITS.maxHabitXp}
-            value={draft.xp}
-            onChange={(e) => set("xp", e.target.value)}
+            value={Number(draft.xp) || 0}
+            onChange={(value) => set("xp", String(value))}
             error={errors.xp}
             disabled={pending}
           />
           {bonus ? (
-            <FormField
+            <SliderField
               id="habit-gems"
-              name="gems"
               label="Gems per completion"
-              type="number"
-              inputMode="numeric"
+              unit="gems"
               min={0}
               max={LIMITS.maxHabitGems}
-              value={draft.gems}
-              onChange={(e) => set("gems", e.target.value)}
+              value={Number(draft.gems) || 0}
+              onChange={(value) => set("gems", String(value))}
               error={errors.gems}
               disabled={pending}
             />
@@ -259,7 +256,7 @@ export function HabitForm({ habit, onClose, onSaved }: HabitFormProps) {
             disabled={pending}
             aria-invalid={errors.description ? true : undefined}
             aria-describedby={errors.description ? "habit-description-error" : undefined}
-            className="block w-full rounded-md border border-input bg-card px-3 py-2 text-base text-card-foreground placeholder:text-muted-foreground disabled:opacity-60 aria-[invalid=true]:border-destructive"
+            className="field block w-full py-2"
           />
           {errors.description ? (
             <p id="habit-description-error" className="text-sm text-destructive">
@@ -275,7 +272,7 @@ export function HabitForm({ habit, onClose, onSaved }: HabitFormProps) {
               checked={draft.timed}
               onChange={(e) => set("timed", e.target.checked)}
               disabled={pending}
-              className="size-5 accent-primary"
+              className="switch"
             />
             Track this habit in minutes
           </label>
@@ -306,31 +303,33 @@ export function HabitForm({ habit, onClose, onSaved }: HabitFormProps) {
                 error={errors["timed.unitMinutes"]}
                 disabled={pending}
               />
-              <FormField
-                id="habit-extra-xp"
-                label="Extra XP per block"
-                type="number"
-                inputMode="numeric"
-                min={0}
-                max={LIMITS.maxHabitXp}
-                value={draft.extraXp}
-                onChange={(e) => set("extraXp", e.target.value)}
-                error={errors["timed.extraXpPerUnit"]}
-                disabled={pending}
-              />
-              {bonus ? (
-                <FormField
-                  id="habit-extra-gems"
-                  label="Extra gems per block"
-                  type="number"
-                  inputMode="numeric"
+              <div className="col-span-2">
+                <SliderField
+                  id="habit-extra-xp"
+                  label="Extra XP per block"
+                  unit="XP"
                   min={0}
-                  max={LIMITS.maxHabitGems}
-                  value={draft.extraGems}
-                  onChange={(e) => set("extraGems", e.target.value)}
-                  error={errors["timed.extraGemsPerUnit"]}
+                  max={LIMITS.maxHabitXp}
+                  value={Number(draft.extraXp) || 0}
+                  onChange={(value) => set("extraXp", String(value))}
+                  error={errors["timed.extraXpPerUnit"]}
                   disabled={pending}
                 />
+              </div>
+              {bonus ? (
+                <div className="col-span-2">
+                  <SliderField
+                    id="habit-extra-gems"
+                    label="Extra gems per block"
+                    unit="gems"
+                    min={0}
+                    max={LIMITS.maxHabitGems}
+                    value={Number(draft.extraGems) || 0}
+                    onChange={(value) => set("extraGems", String(value))}
+                    error={errors["timed.extraGemsPerUnit"]}
+                    disabled={pending}
+                  />
+                </div>
               ) : null}
             </div>
           ) : null}
@@ -341,7 +340,7 @@ export function HabitForm({ habit, onClose, onSaved }: HabitFormProps) {
         <button
           type="button"
           onClick={onClose}
-          className="min-h-11 rounded-md px-4 text-sm font-semibold text-muted-foreground hover:bg-muted hover:text-foreground"
+          className="btn btn-quiet px-4"
         >
           Cancel
         </button>
@@ -349,7 +348,7 @@ export function HabitForm({ habit, onClose, onSaved }: HabitFormProps) {
           type="submit"
           disabled={pending}
           aria-busy={pending}
-          className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
+          className="btn btn-primary px-5"
         >
           {pending ? "Saving…" : habit ? "Save changes" : "Add habit"}
         </button>

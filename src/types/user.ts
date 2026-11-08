@@ -1,4 +1,5 @@
 import type { Types } from "mongoose";
+import type { NotificationPrefs, TelegramLink } from "./notifications";
 
 export type ThemePreference = "system" | "light" | "dark";
 
@@ -40,6 +41,11 @@ export interface UserRecord {
   wallet: Wallet;
   goals: UserGoals;
   seenLevel: number; // last level the user was congratulated for (HTML: S.seenLvl)
+  // The user's own order for habits on the dashboard. Missing ids (new habits) go
+  // after the listed ones, in creation order; ids of deleted habits are ignored.
+  habitOrder: Types.ObjectId[];
+  telegram: TelegramLink;
+  notifications: NotificationPrefs;
   createdAt: Date;
   updatedAt: Date;
 }

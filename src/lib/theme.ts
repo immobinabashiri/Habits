@@ -1,27 +1,46 @@
-export type Theme = "system" | "light" | "dark";
+// The theme registry. Everything else (the picker, the menu, the first-paint
+// script) reads from this list. To add a theme: add one entry here and one CSS file
+// in src/styles/themes/, imported from globals.css. Components need no changes.
+export const THEMES = [
+  { id: "light", label: "Light", description: "Warm cream glass" },
+  { id: "dark", label: "Dark", description: "Soft night glass" },
+  { id: "minimal", label: "Minimal", description: "Quiet and distraction-free" },
+  { id: "organic", label: "Organic", description: "Flowing lagoon waves" },
+  { id: "kawaii", label: "Kawaii", description: "Cute pastel charm" },
+] as const;
+
+export type ThemeId = (typeof THEMES)[number]["id"];
+export type Theme = "system" | ThemeId; // "system" follows the device's light or dark setting
 
 export const THEME_KEY = "theme";
 export const MOTION_KEY = "reduce-motion"; // "1" = reduce motion on this device
 
-// Runs in <head> before first paint to avoid a flash of the wrong theme.
-// "system" is represented by NO data-theme attribute (CSS follows prefers-color-scheme).
-export const themeInitScript = `(function(){try{var t=localStorage.getItem("${THEME_KEY}");if(t==="light"||t==="dark"){document.documentElement.dataset.theme=t}if(localStorage.getItem("${MOTION_KEY}")==="1"){document.documentElement.dataset.motion="reduce"}}catch(e){}})();`;
+const THEME_IDS: readonly string[] = THEMES.map((theme) => theme.id);
+const DARK_QUERY = "(prefers-color-scheme: dark)";
+
+// Runs in <head> before first paint to avoid a flash of the wrong theme. It always
+// sets a concrete data-theme: "system" is resolved to light or dark here, and again
+// whenever the device setting changes.
+export const themeInitScript = `(function(){var d=document.documentElement,q=matchMedia(${JSON.stringify(DARK_QUERY)}),v=${JSON.stringify(THEME_IDS)};function s(k){try{return localStorage.getItem(k)}catch(e){return null}}function a(){var t=s(${JSON.stringify(THEME_KEY)});d.dataset.theme=v.indexOf(t)>=0?t:q.matches?"dark":"light"}a();q.addEventListener("change",a);if(s(${JSON.stringify(MOTION_KEY)})==="1"){d.dataset.motion="reduce"}})();`;
 
 const listeners = new Set<() => void>();
+
+function isThemeId(value: string | null): value is ThemeId {
+  return value !== null && THEME_IDS.includes(value);
+}
 
 export function getTheme(): Theme {
   try {
     const value = localStorage.getItem(THEME_KEY);
-    return value === "light" || value === "dark" ? value : "system";
+    return isThemeId(value) ? value : "system";
   } catch {
     return "system";
   }
 }
 
 function applyTheme(theme: Theme) {
-  const root = document.documentElement;
-  if (theme === "system") delete root.dataset.theme;
-  else root.dataset.theme = theme;
+  const resolved = theme === "system" ? (matchMedia(DARK_QUERY).matches ? "dark" : "light") : theme;
+  document.documentElement.dataset.theme = resolved;
 }
 
 export function setTheme(theme: Theme) {

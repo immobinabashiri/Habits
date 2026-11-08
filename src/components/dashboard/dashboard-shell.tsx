@@ -77,7 +77,7 @@ export function DashboardShell({
         <div
           aria-hidden="true"
           onClick={closeMobile}
-          className="fixed inset-0 z-40 bg-foreground/40 lg:hidden"
+          className="fade-in fixed inset-0 z-40 bg-overlay lg:hidden"
         />
       ) : null}
 
@@ -86,7 +86,7 @@ export function DashboardShell({
         id="app-sidebar"
         ref={asideRef}
         aria-label="Sidebar"
-        className={`fixed inset-y-0 left-0 z-50 w-72 border-r border-border bg-card transition-[transform,width,visibility] duration-200 lg:sticky lg:top-0 lg:z-auto lg:h-screen lg:shrink-0 lg:translate-x-0 lg:self-start lg:visible ${
+        className={`glass fixed inset-y-0 left-0 z-50 w-72 border-y-0 border-l-0 pt-[env(safe-area-inset-top)] transition-[transform,width,visibility] duration-[var(--dur-drawer)] ease-[var(--ease-drawer)] max-lg:bg-card lg:sticky lg:top-0 lg:z-40 lg:h-dvh lg:shrink-0 lg:pt-0 lg:translate-x-0 lg:self-start lg:visible ${
           mobileOpen ? "visible translate-x-0" : "invisible -translate-x-full"
         } ${collapsed ? "lg:w-[4.5rem]" : "lg:w-64"}`}
       >
@@ -100,7 +100,7 @@ export function DashboardShell({
 
       {/* inert: while the drawer is open nothing behind it can be focused or clicked */}
       <div className="flex min-w-0 flex-1 flex-col" inert={mobileOpen}>
-        <header className="glass sticky top-0 z-30 flex h-14 items-center gap-3 border-x-0 border-t-0 px-4 lg:hidden">
+        <header className="glass sticky top-0 z-30 flex h-[calc(3.5rem+env(safe-area-inset-top))] items-center gap-3 border-x-0 border-t-0 px-4 pt-[env(safe-area-inset-top)] lg:hidden">
           <button
             type="button"
             ref={menuButtonRef}
@@ -108,13 +108,13 @@ export function DashboardShell({
             aria-label="Open menu"
             aria-expanded={mobileOpen}
             aria-controls="app-sidebar"
-            className="-ml-2 inline-flex size-11 items-center justify-center rounded-md hover:bg-muted"
+            className="btn-icon -ml-2"
           >
             <Menu className="size-5" aria-hidden="true" />
           </button>
-          <span className="flex items-center gap-2 font-bold tracking-tight">
+          <span className="brand flex items-center gap-2">
             <LogoMark className="size-6" />
-            Gem Habits
+            Dayfacet
           </span>
         </header>
 

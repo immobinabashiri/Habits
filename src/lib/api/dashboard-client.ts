@@ -31,6 +31,11 @@ export function buyStreakFreezesRequest(quantity: number): Promise<DashboardMuta
   return request<DashboardMutation>("/api/streak-freezes", jsonInit("POST", { quantity }));
 }
 
+// PUT /api/user/habit-order   body: { habitIds }
+export async function saveHabitOrderRequest(habitIds: string[]): Promise<void> {
+  await request<{ ok: true }>("/api/user/habit-order", jsonInit("PUT", { habitIds }));
+}
+
 // POST /api/user/seen-level
 export async function acknowledgeLevelRequest(): Promise<void> {
   await request<{ ok: true }>("/api/user/seen-level", jsonInit("POST", {}));

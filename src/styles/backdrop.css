@@ -1,0 +1,71 @@
+/* The layer behind everything. Rendered once by <ThemeBackdrop />; each theme
+   chooses what shows. Lightweight on purpose: gradients and inline SVG, no images. */
+.page-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background-color: var(--background);
+  background-image: var(--page-bg);
+}
+
+.backdrop-waves,
+.backdrop-charms {
+  display: none;
+}
+[data-theme="organic"] .backdrop-waves,
+[data-theme="kawaii"] .backdrop-charms {
+  display: block;
+}
+
+/* ---------- Organic: slow flowing waves and soft blobs ---------- */
+.backdrop-waves svg {
+  position: absolute;
+  left: -10%;
+  width: 120%;
+}
+.backdrop-waves .wave-a { bottom: 0; height: 46%; animation: wave-drift 26s ease-in-out infinite alternate; }
+.backdrop-waves .wave-b { bottom: 0; height: 34%; animation: wave-drift 34s ease-in-out infinite alternate-reverse; }
+.backdrop-waves .wave-c { top: -6%; height: 30%; animation: wave-drift 40s ease-in-out infinite alternate; }
+.backdrop-waves .fill-wave-1 { fill: var(--wave-1); }
+.backdrop-waves .fill-wave-2 { fill: var(--wave-2); }
+.backdrop-waves .fill-wave-3 { fill: var(--wave-3); }
+
+.backdrop-waves .blob {
+  position: absolute;
+  background: var(--wave-2);
+  filter: blur(2px);
+  animation: blob-morph 22s ease-in-out infinite alternate;
+}
+.backdrop-waves .blob-a { top: 18%; right: -7rem; width: 24rem; height: 24rem; border-radius: 58% 42% 37% 63% / 46% 58% 42% 54%; background: var(--wave-3); }
+.backdrop-waves .blob-b { top: 42%; left: -9rem; width: 26rem; height: 22rem; border-radius: 42% 58% 63% 37% / 57% 39% 61% 43%; animation-delay: -8s; }
+
+@keyframes wave-drift {
+  to { transform: translateX(6%); }
+}
+@keyframes blob-morph {
+  to {
+    border-radius: 42% 58% 55% 45% / 58% 42% 58% 42%;
+    transform: translate(1.5rem, -1rem) rotate(8deg);
+  }
+}
+
+/* ---------- Kawaii: drifting stars, hearts and clouds ---------- */
+.backdrop-charms svg {
+  position: absolute;
+  animation: charm-float 7s ease-in-out infinite alternate;
+}
+.backdrop-charms .charm-pink { color: var(--charm-pink); }
+.backdrop-charms .charm-lilac { color: var(--charm-lilac); }
+.backdrop-charms .charm-mint { color: var(--charm-mint); }
+.backdrop-charms .charm-butter { color: var(--charm-butter); }
+.backdrop-charms .charm-cloud { color: var(--charm-cloud); }
+
+@keyframes charm-float {
+  to { transform: translateY(-14px) rotate(6deg); }
+}
+/* On small screens fewer charms, so they never crowd the content */
+@media (max-width: 40rem) {
+  .backdrop-charms .charm-optional { display: none; }
+}

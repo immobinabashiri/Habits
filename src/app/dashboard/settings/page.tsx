@@ -6,6 +6,8 @@ import { SettingsView } from "@/components/settings/settings-view";
 import { authOptions } from "@/lib/auth/auth";
 import { AppError } from "@/lib/errors";
 import { getSettings } from "@/lib/services/settings";
+import { getTelegramStatus } from "@/lib/services/telegram";
+import type { TelegramStatus } from "@/types/notifications";
 import type { SettingsData } from "@/lib/services/settings";
 
 export const metadata: Metadata = { title: "Settings" };
@@ -16,8 +18,9 @@ export default async function SettingsPage() {
   if (!id || !Types.ObjectId.isValid(id)) redirect("/login");
 
   let settings: SettingsData;
+  let telegram: TelegramStatus;
   try {
-    settings = await getSettings(new Types.ObjectId(id));
+    [settings, telegram] = await Promise.all([getSettings(new Types.ObjectId(id)), getTelegramStatus(new Types.ObjectId(id))]);
   } catch (error) {
     if (error instanceof AppError && error.code === "UNAUTHENTICATED") redirect("/login");
     throw error;
@@ -35,6 +38,7 @@ export default async function SettingsPage() {
       // Google accounts have no password of their own. Sessions from before this
       // flag existed have no provider and keep the form (the server still checks).
       canChangePassword={session?.user?.provider !== "google"}
+      telegram={telegram}
     />
   );
 }

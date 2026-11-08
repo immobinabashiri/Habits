@@ -16,10 +16,12 @@ import {
   buyStreakFreezesRequest,
   completeHabitRequest,
   decideMissedDayRequest,
+  saveHabitOrderRequest,
   undoCompletionRequest,
 } from "@/lib/api/dashboard-client";
 import { toApiError } from "@/lib/api/habits-client";
 import { formatDateKey, todayKey } from "@/lib/domain/dates";
+import { applyOrder, mergeSubsetOrder } from "@/lib/domain/habit-order";
 import type { CompletionResult, DashboardData, DashboardMutation } from "@/types/dashboard";
 
 const DAY_CHECK_MS = 60_000;
@@ -76,6 +78,30 @@ export function DashboardView({ initial }: { initial: DashboardData }) {
     }
   }
 
+  // Reordering shows the new order at once and saves it in the background. It takes
+  // the same one-action-at-a-time lock, so a completion can never return the old order.
+  async function reorderHabits(dueIds: string[]) {
+    if (busy) return;
+    const previous = data.habits;
+    const order = mergeSubsetOrder(previous.map((item) => item.habit.id), dueIds);
+    setData((current) => ({ ...current, habits: applyOrder(current.habits, order, (item) => item.habit.id) }));
+    setBusy(true);
+    setError(null);
+    try {
+      await saveHabitOrderRequest(order);
+    } catch (caught) {
+      const apiError = toApiError(caught);
+      if (apiError.code === "UNAUTHENTICATED") {
+        router.push("/login");
+        return;
+      }
+      setData((current) => ({ ...current, habits: applyOrder(current.habits, previous.map((item) => item.habit.id), (item) => item.habit.id) }));
+      setError("The new order could not be saved. Please try again.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   // A tab left open past midnight: "today" has changed on the server, so reload the
   // day. (The page key changes with the day, which starts the view fresh.)
   useEffect(() => {
@@ -99,11 +125,11 @@ export function DashboardView({ initial }: { initial: DashboardData }) {
   const firstName = data.userName.split(" ")[0] || data.userName;
 
   return (
-    <div className="mx-auto w-full max-w-5xl space-y-6 px-4 py-8 sm:px-6">
+    <div className="page space-y-6">
       <TimezoneSync stored={data.timezone} />
 
       <header>
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Hi, {firstName}</h1>
+        <h1 className="type-h1 sm:text-3xl">Hi, {firstName}</h1>
         <p className="mt-1 text-muted-foreground">{formatDateKey(data.today)}</p>
       </header>
 
@@ -112,7 +138,7 @@ export function DashboardView({ initial }: { initial: DashboardData }) {
       {error ? (
         <p
           role="alert"
-          className="rounded-md border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive"
+          className="alert alert-error"
         >
           {error}
         </p>
@@ -136,7 +162,7 @@ export function DashboardView({ initial }: { initial: DashboardData }) {
         }
       />
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <div className="space-y-8">
           <TodayHabits
             habits={data.habits}
@@ -148,6 +174,7 @@ export function DashboardView({ initial }: { initial: DashboardData }) {
                 (result) => (result ? rewardMessages(result) : []),
               )
             }
+            onReorder={reorderHabits}
             onUndo={(habitId) =>
               run(
                 () => undoCompletionRequest(habitId),

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Dayfacet mark: a faceted gem on the brand tile. Fills only, so it stays crisp at 16px. -->
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#b5344c"/>
+      <stop offset="1" stop-color="#8256c9"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" fill="url(#tile)"/>
+  <g transform="translate(32 32) scale(0.6) translate(-32 -33.5)">
+    <path d="M20 17h24l10 11-22 22-22-22z" fill="#fff"/>
+    <path d="M24 28h16l-8 22z" fill="#8256c9" fill-opacity=".3"/>
+    <path d="M20 17l4 11H10zM44 17l-4 11h14z" fill="#b5344c" fill-opacity=".18"/>
+    <path d="M24 28l8-11 8 11z" fill="#fff" fill-opacity=".6"/>
+  </g>
+</svg>

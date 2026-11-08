@@ -32,7 +32,7 @@ const toRows = (list: readonly StreakMilestone[], startKey = 0): Row[] =>
 const asNumber = (text: string) => (/^\d+$/.test(text.trim()) ? Number(text) : undefined);
 
 const cell =
-  "block min-h-11 w-full rounded-md border border-input bg-card px-3 text-base text-card-foreground disabled:opacity-60 aria-[invalid=true]:border-destructive";
+  "field block min-h-11 w-full";
 
 export function MilestonesSection({ milestones }: { milestones: StreakMilestone[] }) {
   const router = useRouter();
@@ -108,7 +108,7 @@ export function MilestonesSection({ milestones }: { milestones: StreakMilestone[
     >
       <form onSubmit={handleSubmit} noValidate className="space-y-4">
         {rows.length === 0 ? (
-          <p className="rounded-md border border-dashed border-border px-4 py-5 text-sm text-muted-foreground">
+          <p className="empty-box px-4 py-5 text-sm text-muted-foreground">
             No streak bonuses. Streaks still count, they just do not pay gems.
           </p>
         ) : (
@@ -173,7 +173,7 @@ export function MilestonesSection({ milestones }: { milestones: StreakMilestone[
                     disabled={pending}
                     aria-label={`Remove bonus ${index + 1}${row.days ? ` (${row.days} days)` : ""}`}
                     title="Remove"
-                    className="mt-6 inline-flex size-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive disabled:opacity-50"
+                    className="btn-icon btn-icon-danger mt-6"
                   >
                     <Trash2 className="size-4" aria-hidden="true" />
                   </button>

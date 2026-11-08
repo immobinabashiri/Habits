@@ -37,7 +37,7 @@ export function DeleteHabitDialog({ habit, onClose, onDeleted }: DeleteHabitDial
 
   return (
     <div className="space-y-4 p-5">
-      <h2 id="modal-title" className="text-lg font-bold tracking-tight">
+      <h2 id="modal-title" className="type-h2">
         Delete “{habit.name}”?
       </h2>
       <p className="text-sm text-muted-foreground">
@@ -47,7 +47,7 @@ export function DeleteHabitDialog({ habit, onClose, onDeleted }: DeleteHabitDial
       </p>
 
       {error ? (
-        <p role="alert" className="rounded-md border border-destructive px-3 py-2 text-sm text-destructive">
+        <p role="alert" className="alert alert-error">
           {error}
         </p>
       ) : null}
@@ -58,7 +58,7 @@ export function DeleteHabitDialog({ habit, onClose, onDeleted }: DeleteHabitDial
           type="button"
           data-autofocus
           onClick={onClose}
-          className="min-h-11 rounded-md px-4 text-sm font-semibold text-muted-foreground hover:bg-muted hover:text-foreground"
+          className="btn btn-quiet px-4"
         >
           Cancel
         </button>
@@ -67,7 +67,7 @@ export function DeleteHabitDialog({ habit, onClose, onDeleted }: DeleteHabitDial
           onClick={handleDelete}
           disabled={pending}
           aria-busy={pending}
-          className="min-h-11 rounded-md bg-destructive px-5 text-sm font-semibold text-destructive-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
+          className="btn btn-danger px-5"
         >
           {pending ? "Deleting…" : "Delete habit"}
         </button>

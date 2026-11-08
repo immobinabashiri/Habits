@@ -1,0 +1,80 @@
+/* THEME: Classic Light. Warm cream glass with rose and lavender. Also the fallback before a theme is applied. */
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+
+  --background: #f7f2ea;
+  --foreground: #2c2b33;
+  --card: #fffdf9;
+  --card-foreground: #2c2b33;
+  --popover: #fffdf9;
+  --popover-foreground: #2c2b33;
+  --field: rgb(255 255 255 / 0.72);
+
+  --primary: #a82c44;
+  --primary-foreground: #ffffff;
+  --secondary: #e9e2fa;
+  --secondary-foreground: #2f2850;
+  --accent: #c9b9f0;
+  --accent-foreground: #2c2b33;
+
+  --muted: #efe8db;
+  --muted-foreground: #5c5a66;
+  --border: rgb(70 56 40 / 0.14);
+  --input: #8d8796;
+  --ring: #6a4cc7;
+  --overlay: rgb(38 30 24 / 0.45);
+
+  --success: #1f6e50;
+  --success-soft: #bfe8d6;
+  --warning: #7a5500;
+  --destructive: #b3301f;
+  --destructive-foreground: #ffffff;
+  --reward: #ffe69a;
+  --reward-foreground: #4f4100;
+
+  /* Calendar activity types (icons and chip edges; 3:1 against cards) */
+  --cal-event: #a82c44;
+  --cal-workout: #c2410c;
+  --cal-task: #6a4cc7;
+  --cal-reminder: #0369a1;
+  --cal-note: #5c5a66;
+  --cal-goal: #8a6400;
+  --cal-habit: #1f6e50;
+
+  /* Depth: 1 = cards, 2 = navigation and raised panels, 3 = dialogs */
+  --glass-1: rgb(255 255 255 / 0.62);
+  --glass-2: rgb(255 255 255 / 0.72);
+  --glass-3: rgb(255 253 249 / 0.92);
+  --glass-border: rgb(255 255 255 / 0.7);
+  --glass-edge: rgb(70 56 40 / 0.12);
+  --glass-highlight: rgb(255 255 255 / 0.85);
+  --glass-sheen: linear-gradient(145deg, rgb(255 255 255 / 0.45), rgb(255 255 255 / 0) 55%);
+  --blur-1: 14px;
+  --blur-2: 20px;
+  --blur-3: 28px;
+  --shadow-1: 0 4px 18px rgb(92 66 40 / 0.07);
+  --shadow-2: 0 10px 32px rgb(92 66 40 / 0.11);
+  --shadow-3: 0 24px 64px rgb(60 40 24 / 0.24);
+  --shadow-primary: 0 6px 16px rgb(168 44 68 / 0.28);
+
+  --gradient-primary: linear-gradient(135deg, #b5344c, #a02a55);
+  --gradient-progress: linear-gradient(90deg, #a82c44, #8256c9);
+  --page-bg:
+    radial-gradient(60rem 40rem at 8% -10%, rgb(201 185 240 / 0.55), transparent 70%),
+    radial-gradient(52rem 36rem at 100% 10%, rgb(240 160 170 / 0.38), transparent 70%),
+    radial-gradient(60rem 40rem at 50% 110%, rgb(255 222 150 / 0.4), transparent 70%);
+
+  --r-sm: 0.5rem;
+  --r-md: 0.75rem;
+  --r-lg: 1rem;
+  --r-xl: 1.5rem;
+  --r-control: 0.75rem;
+
+  --font-body: var(--font-jakarta);
+  --font-display: var(--font-jakarta);
+  --heading-weight: 700;
+  --heading-tracking: -0.02em;
+
+  --hover-lift: -1px;
+}

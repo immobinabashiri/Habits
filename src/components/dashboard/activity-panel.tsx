@@ -13,8 +13,8 @@ function formatWhen(iso: string, timeZone: string): string {
 
 export function ActivityPanel({ items, timezone }: { items: ActivityItem[]; timezone: string }) {
   return (
-    <section aria-labelledby="activity-title" className="rounded-xl border border-border bg-card p-4">
-      <h2 id="activity-title" className="font-bold tracking-tight">
+    <section aria-labelledby="activity-title" className="panel p-4">
+      <h2 id="activity-title" className="type-h3">
         Recent gems
       </h2>
       {items.length === 0 ? (

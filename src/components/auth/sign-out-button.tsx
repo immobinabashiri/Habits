@@ -7,7 +7,7 @@ export function SignOutButton() {
     <button
       type="button"
       onClick={() => signOut({ callbackUrl: "/" })}
-      className="min-h-11 rounded-md border border-border bg-card px-4 text-sm font-semibold transition-colors hover:bg-muted"
+      className="btn btn-outline px-4"
     >
       Log out
     </button>

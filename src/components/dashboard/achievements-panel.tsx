@@ -3,25 +3,26 @@ import Link from "next/link";
 import { formatDateKey } from "@/lib/domain/dates";
 import type { DashboardData } from "@/types/dashboard";
 
+// The dashboard only needs what is next: up to three locked goals (or, once
+// everything is unlocked, the latest three). The full list has its own page.
+const SHOWN = 3;
+
 export function AchievementsPanel({ achievements }: { achievements: DashboardData["achievements"] }) {
+  const locked = achievements.items.filter((item) => !item.unlocked);
+  const shown = locked.length > 0 ? locked.slice(0, SHOWN) : achievements.items.slice(-SHOWN);
   return (
-    <section aria-labelledby="ach-title" className="rounded-xl border border-border bg-card p-4">
+    <section aria-labelledby="ach-title" className="panel p-4">
       <div className="flex items-center justify-between gap-3">
-        <h2 id="ach-title" className="font-bold tracking-tight">
+        <h2 id="ach-title" className="type-h3">
           Achievements
         </h2>
         <span className="text-sm text-muted-foreground">
           {achievements.unlockedCount}/{achievements.total}
         </span>
       </div>
-      <Link
-        href="/dashboard/achievements"
-        className="mt-1 inline-flex min-h-11 items-center text-sm font-semibold text-primary hover:underline"
-      >
-        See progress for all
-      </Link>
-      <ul className="mt-3 space-y-2">
-        {achievements.items.map((item) => (
+      <p className="text-sm text-muted-foreground">{locked.length > 0 ? "Up next" : "All unlocked"}</p>
+      <ul className="mt-2 space-y-1">
+        {shown.map((item) => (
           <li
             key={item.key}
             className={`flex items-start gap-3 rounded-md p-2 ${item.unlocked ? "" : "opacity-60"}`}
@@ -48,6 +49,12 @@ export function AchievementsPanel({ achievements }: { achievements: DashboardDat
           </li>
         ))}
       </ul>
+      <Link
+        href="/dashboard/achievements"
+        className="mt-1 inline-flex min-h-11 items-center rounded-md text-sm font-semibold text-primary underline-offset-4 hover:underline"
+      >
+        See all {achievements.total}
+      </Link>
     </section>
   );
 }

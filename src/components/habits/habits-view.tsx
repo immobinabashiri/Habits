@@ -91,7 +91,7 @@ export function HabitsView({ initialHabits }: { initialHabits: PublicHabit[] }) 
     <button
       type="button"
       onClick={() => setDialog({ type: "form", habitId: null })}
-      className="inline-flex min-h-11 items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+      className="btn btn-primary gap-2 px-4"
     >
       <Plus className="size-5" aria-hidden="true" />
       Add habit
@@ -99,10 +99,10 @@ export function HabitsView({ initialHabits }: { initialHabits: PublicHabit[] }) 
   );
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
+    <div className="page">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Habits</h1>
+          <h1 className="type-h1">Habits</h1>
           <p className="mt-1 text-muted-foreground">
             {habits.length === 0
               ? "Build your routine one habit at a time."
@@ -115,14 +115,14 @@ export function HabitsView({ initialHabits }: { initialHabits: PublicHabit[] }) 
       {actionError ? (
         <div
           role="alert"
-          className="mt-6 flex items-start justify-between gap-3 rounded-md border border-destructive px-3 py-2 text-sm text-destructive"
+          className="mt-6 flex items-start justify-between gap-3 alert alert-error"
         >
           <p className="py-1.5">{actionError}</p>
           <button
             type="button"
             onClick={() => setActionError(null)}
             aria-label="Dismiss"
-            className="-my-1 -mr-2 inline-flex size-11 shrink-0 items-center justify-center rounded-md hover:bg-destructive/10"
+            className="btn-icon btn-icon-danger -my-1 -mr-2 shrink-0"
           >
             <X className="size-4" aria-hidden="true" />
           </button>
@@ -130,18 +130,14 @@ export function HabitsView({ initialHabits }: { initialHabits: PublicHabit[] }) 
       ) : null}
 
       {habits.length > 0 ? (
-        <div role="group" aria-label="Show habits" className="glass mt-6 inline-flex rounded-full p-1">
+        <div role="group" aria-label="Show habits" className="segmented mt-6">
           {FILTERS.map(({ value, label }) => (
             <button
               key={value}
               type="button"
               onClick={() => setFilter(value)}
               aria-pressed={filter === value}
-              className={`min-h-9 rounded-full px-4 text-sm font-medium transition-colors ${
-                filter === value
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
+              className="segmented-item"
             >
               {label} ({counts[value]})
             </button>
@@ -150,15 +146,15 @@ export function HabitsView({ initialHabits }: { initialHabits: PublicHabit[] }) 
       ) : null}
 
       {habits.length === 0 ? (
-        <div className="mt-8 flex flex-col items-center gap-4 rounded-lg border border-dashed border-border px-6 py-16 text-center">
+        <div className="mt-8 flex flex-col items-center gap-4 empty-box px-6 py-16 text-center">
           <span
             aria-hidden="true"
-            className="inline-flex size-14 items-center justify-center rounded-full bg-secondary text-secondary-foreground"
+            className="inline-flex size-14 items-center justify-center icon-bubble"
           >
             <ListChecks className="size-7" />
           </span>
           <div>
-            <h2 className="text-lg font-semibold">No habits yet</h2>
+            <h2 className="type-h2">No habits yet</h2>
             <p className="mt-1 max-w-sm text-muted-foreground">
               Create your first habit, choose the days it happens, and start earning gems.
             </p>
@@ -166,10 +162,10 @@ export function HabitsView({ initialHabits }: { initialHabits: PublicHabit[] }) 
           {addButton}
         </div>
       ) : visible.length === 0 ? (
-        <div className="mt-6 flex flex-col items-center gap-3 rounded-lg border border-dashed border-border px-6 py-14 text-center">
+        <div className="mt-6 flex flex-col items-center gap-3 empty-box px-6 py-14 text-center">
           <span
             aria-hidden="true"
-            className="inline-flex size-12 items-center justify-center rounded-full bg-secondary text-secondary-foreground"
+            className="inline-flex size-12 items-center justify-center icon-bubble"
           >
             <Archive className="size-6" />
           </span>
@@ -180,7 +176,7 @@ export function HabitsView({ initialHabits }: { initialHabits: PublicHabit[] }) 
           </p>
         </div>
       ) : (
-        <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {visible.map((habit) => (
             <HabitCard
               key={habit.id}

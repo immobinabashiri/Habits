@@ -1,0 +1,990 @@
+/* Shared visual primitives. Every value comes from the active theme's tokens,
+   so no component needs to know which theme is on. Layered as "components",
+   so Tailwind utilities can always override them. */
+@layer components {
+  /* ---------- Glass surfaces: three levels of depth ---------- */
+  .surface,
+  .panel,
+  .glass {
+    border: 1px solid var(--glass-border);
+    outline: 1px solid var(--glass-edge);
+    outline-offset: -1px;
+    color: var(--card-foreground);
+    background: var(--card); /* opaque fallback */
+
+    @supports (backdrop-filter: blur(1px)) {
+      -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+      backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+      background: var(--glass-sheen), var(--glass-fill);
+    }
+  }
+
+  .surface,
+  .panel {
+    --glass-blur: var(--blur-1);
+    --glass-fill: var(--glass-1);
+    box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-1);
+  }
+  .surface { border-radius: var(--r-lg); }
+  .panel { border-radius: var(--panel-shape, var(--r-xl)); }
+
+  .glass {
+    --glass-blur: var(--blur-2);
+    --glass-fill: var(--glass-2);
+    box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-2);
+  }
+
+  /* Dialogs. Near-opaque, so nothing behind can hurt legibility. */
+  .glass-overlay {
+    --glass-blur: var(--blur-3);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--r-xl);
+    color: var(--card-foreground);
+    background: var(--popover);
+    box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-3);
+
+    @supports (backdrop-filter: blur(1px)) {
+      -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+      backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+      background: var(--glass-3);
+    }
+  }
+
+  /* A surface that responds to the pointer */
+  /* Only for surfaces that are themselves clickable. Hover is gated so a tap on a
+     phone does not leave the card stuck in its lifted state. */
+  .surface-interactive {
+    transition: transform var(--dur-pop) var(--ease-ui), box-shadow var(--dur-pop) var(--ease-ui);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .surface-interactive:hover {
+      transform: translateY(var(--hover-lift));
+      box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-2);
+    }
+  }
+
+  /* ---------- Page rhythm ---------- */
+  .page {
+    margin-inline: auto;
+    width: 100%;
+    max-width: 64rem;
+    padding: 2.5rem 1rem;
+  }
+  .page-narrow { max-width: 48rem; }
+  .page-wide { max-width: 100rem; } /* calendar grids need the room */
+  @media (min-width: 40rem) {
+    .page { padding-inline: 1.5rem; }
+  }
+
+  /* ---------- Typography scale ---------- */
+  .type-display,
+  .type-h1,
+  .type-h2,
+  .type-h3,
+  .type-stat,
+  .brand {
+    font-family: var(--font-display), var(--font-body), system-ui, sans-serif;
+    font-weight: var(--heading-weight);
+    letter-spacing: var(--heading-tracking);
+  }
+  .type-display { font-size: clamp(2.25rem, 1.6rem + 3vw, 3.5rem); line-height: 1.08; }
+  .type-h1 { font-size: 1.625rem; line-height: 1.2; }
+  .type-h2 { font-size: 1.125rem; line-height: 1.35; }
+  .type-h3 { font-size: 1rem; line-height: 1.4; }
+  .type-stat { font-size: 1.375rem; line-height: 1.2; font-variant-numeric: tabular-nums; }
+  .brand { font-size: 1.0625rem; }
+
+  /* ---------- Buttons ---------- */
+  .btn {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: var(--r-control);
+    padding-inline: 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transition:
+      transform var(--dur-press) var(--ease-ui),
+      box-shadow var(--dur-press) var(--ease-ui),
+      background-color var(--dur-press) ease,
+      color var(--dur-press) ease,
+      filter var(--dur-press) ease,
+      opacity var(--dur-press) ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .btn:hover:not(:disabled) { transform: translateY(var(--hover-lift)); }
+  }
+  .btn:active:not(:disabled) { transform: translateY(0) scale(0.97); }
+  .btn:disabled { cursor: not-allowed; opacity: 0.55; }
+
+  .btn-primary {
+    background: var(--gradient-primary);
+    color: var(--primary-foreground);
+    box-shadow: var(--shadow-primary);
+  }
+  .btn-primary:hover:not(:disabled) { filter: brightness(1.06); }
+
+  .btn-secondary {
+    background: var(--secondary);
+    color: var(--secondary-foreground);
+  }
+  .btn-secondary:hover:not(:disabled) { filter: brightness(0.97); }
+
+  .btn-outline {
+    border: 1px solid var(--input);
+    background: var(--field);
+    color: var(--foreground);
+  }
+  .btn-outline:hover:not(:disabled) { background: var(--muted); }
+
+  .btn-quiet { color: var(--muted-foreground); }
+  .btn-quiet:hover:not(:disabled) { background: var(--muted); color: var(--foreground); }
+
+  .btn-danger {
+    background: var(--destructive);
+    color: var(--destructive-foreground);
+  }
+  .btn-danger:hover:not(:disabled) { filter: brightness(1.07); }
+
+  /* ---------- Form fields ---------- */
+  .field {
+    border: 1px solid var(--input);
+    border-radius: var(--r-md);
+    background: var(--field);
+    padding-inline: 0.75rem;
+    color: var(--foreground);
+    font-size: 1rem; /* 16px also stops iOS zooming on focus */
+    transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+  }
+  .field::placeholder { color: var(--muted-foreground); }
+  @media (hover: hover) and (pointer: fine) {
+    .field:hover:not(:disabled) { border-color: var(--foreground); }
+  }
+  .field:focus-visible { box-shadow: 0 0 0 4px color-mix(in oklab, var(--ring) 22%, transparent); }
+  .field:disabled { cursor: not-allowed; opacity: 0.6; }
+  .field[aria-invalid="true"] { border-color: var(--destructive); }
+  select.field option { background: var(--popover); color: var(--popover-foreground); }
+
+  /* ---------- Segmented control ---------- */
+  .segmented {
+    --glass-blur: var(--blur-2);
+    --glass-fill: var(--glass-2);
+    display: inline-flex;
+    gap: 0.125rem;
+    border: 1px solid var(--glass-border);
+    outline: 1px solid var(--glass-edge);
+    outline-offset: -1px;
+    border-radius: var(--r-control);
+    background: var(--glass-fill);
+    padding: 0.25rem;
+    box-shadow: var(--shadow-1);
+  }
+  /* One item of a segmented control (filters, ranges). Full 44px touch target;
+     the active item takes the theme's primary treatment. */
+  .segmented-item {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    border-radius: calc(var(--r-control) - 0.125rem);
+    padding-inline: 1rem;
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: color var(--dur-press) ease, background-color var(--dur-press) ease, transform var(--dur-press) var(--ease-ui);
+  }
+  .segmented-item:active { transform: scale(0.97); }
+  .segmented-item :where(.count) { font-variant-numeric: tabular-nums; opacity: 0.75; }
+  @media (hover: hover) and (pointer: fine) {
+    .segmented-item:hover { color: var(--foreground); }
+  }
+  .segmented-item:is([aria-pressed="true"], [aria-current="page"]) {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+  }
+  .segmented > li { display: flex; }
+  @media (max-width: 30rem) {
+    .segmented { display: flex; }
+    .segmented > li,
+    .segmented > .segmented-item { flex: 1 1 0; }
+    .segmented-item { width: 100%; padding-inline: 0.5rem; }
+  }
+
+  /* ---------- Icon containers ---------- */
+  .icon-tile {
+    border-radius: var(--r-md);
+    background: var(--secondary);
+    color: var(--secondary-foreground);
+  }
+  .icon-bubble {
+    border-radius: 9999px;
+    background: var(--secondary);
+    color: var(--secondary-foreground);
+  }
+
+  /* ---------- Feedback ---------- */
+  .alert {
+    border: 1px solid;
+    border-radius: var(--r-md);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.45;
+  }
+  .alert-error {
+    border-color: var(--destructive);
+    background: color-mix(in oklab, var(--destructive) 10%, var(--card));
+    color: var(--destructive);
+  }
+  .alert-success {
+    border-color: var(--success);
+    background: color-mix(in oklab, var(--success-soft) 55%, var(--card));
+    color: var(--foreground);
+  }
+
+  /* ---------- Empty states ---------- */
+  .empty-box {
+    position: relative;
+    border: 1.5px dashed var(--input);
+    border-radius: var(--r-lg);
+    background: color-mix(in oklab, var(--card) 45%, transparent);
+  }
+
+  /* ---------- Progress ---------- */
+  .progress-track {
+    overflow: hidden;
+    border-radius: 9999px;
+    background: var(--muted);
+    box-shadow: inset 0 1px 2px color-mix(in oklab, var(--foreground) 10%, transparent);
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 9999px;
+    background: var(--gradient-progress);
+    transition: width 400ms var(--ease-ui);
+  }
+
+  /* ---------- Loading skeleton ---------- */
+  .skeleton {
+    border-radius: var(--r-md);
+    background: color-mix(in oklab, var(--muted-foreground) 16%, transparent);
+    animation: skeleton-pulse 1.6s ease-in-out infinite;
+  }
+}
+
+@keyframes skeleton-pulse {
+  50% { opacity: 0.45; }
+}
+
+/* ---------- Honour people who ask for less transparency ---------- */
+@media (prefers-reduced-transparency: reduce) {
+  :root,
+  [data-theme] {
+    --glass-1: var(--card);
+    --glass-2: var(--card);
+    --glass-3: var(--card);
+    --glass-sheen: linear-gradient(transparent, transparent);
+  }
+}
+
+/* ---------- Theme previews (rendered with data-theme, so they use real tokens) ---------- */
+.theme-preview {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: var(--background);
+  background-image: var(--page-bg);
+  padding: 0.5rem;
+}
+.theme-preview-card {
+  display: grid;
+  width: 100%;
+  max-width: 7rem;
+  gap: 0.25rem;
+  border-radius: var(--r-md);
+  padding: 0.4rem 0.5rem;
+}
+.theme-preview-title {
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: var(--heading-weight);
+  line-height: 1;
+}
+.theme-preview-line {
+  height: 0.25rem;
+  border-radius: 9999px;
+  background: var(--muted-foreground);
+  opacity: 0.45;
+}
+.theme-preview-button {
+  height: 0.5rem;
+  width: 60%;
+  border-radius: var(--r-control);
+  background: var(--gradient-primary);
+}
+
+/* ---------- Toasts arrive softly ---------- */
+.toast-in {
+  animation: toast-in var(--dur-enter) var(--ease-ui);
+}
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(0.5rem) scale(0.98); }
+}
+
+@layer components {
+  /* ---------- Slider ---------- */
+  .slider {
+    --_thumb: var(--slider-thumb, 1.375rem);
+    --_track: var(--slider-track, 0.5rem);
+    --_at: calc(var(--slider-fraction) * (100% - var(--_thumb)) + var(--_thumb) / 2);
+    position: relative;
+    display: flex;
+    min-height: 2.75rem; /* full touch target, however thin the track */
+    align-items: center;
+  }
+  .slider input {
+    width: 100%;
+    height: 2.75rem;
+    margin: 0;
+    appearance: none;
+    -webkit-appearance: none;
+    position: relative;
+    z-index: 1;
+    background: transparent;
+    cursor: grab;
+  }
+  .slider input:active { cursor: grabbing; }
+  .slider input:disabled { cursor: not-allowed; opacity: 0.55; }
+
+  /* The filled part is painted on the track, so it never lags behind the thumb. */
+  .slider input::-webkit-slider-runnable-track {
+    height: var(--_track);
+    border-radius: 9999px;
+    background: var(--gradient-progress) 0 0 / var(--_at) 100% no-repeat, var(--muted);
+    box-shadow: inset 0 0 0 1px var(--border);
+  }
+  .slider input::-moz-range-track {
+    height: var(--_track);
+    border-radius: 9999px;
+    background: var(--muted);
+    box-shadow: inset 0 0 0 1px var(--border);
+  }
+  .slider input::-moz-range-progress {
+    height: var(--_track);
+    border-radius: 9999px;
+    background: var(--gradient-progress);
+  }
+  .slider input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: var(--_thumb);
+    height: var(--_thumb);
+    margin-top: calc((var(--_track) - var(--_thumb)) / 2);
+    border: 3px solid var(--primary);
+    border-radius: var(--slider-thumb-radius, 9999px);
+    background: var(--card);
+    box-shadow: var(--shadow-1), 0 1px 3px color-mix(in oklab, var(--foreground) 25%, transparent);
+    transition: transform 140ms var(--ease-ui), box-shadow 140ms var(--ease-ui);
+  }
+  .slider input::-moz-range-thumb {
+    box-sizing: border-box;
+    width: var(--_thumb);
+    height: var(--_thumb);
+    border: 3px solid var(--primary);
+    border-radius: var(--slider-thumb-radius, 9999px);
+    background: var(--card);
+    box-shadow: var(--shadow-1);
+    transition: transform 140ms var(--ease-ui), box-shadow 140ms var(--ease-ui);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .slider input:hover:not(:disabled)::-webkit-slider-thumb { transform: scale(1.1); }
+    .slider input:hover:not(:disabled)::-moz-range-thumb { transform: scale(1.1); }
+  }
+  .slider input:active:not(:disabled)::-webkit-slider-thumb {
+    transform: scale(1.18);
+    box-shadow: 0 0 0 7px color-mix(in oklab, var(--primary) 22%, transparent);
+  }
+  .slider input:active:not(:disabled)::-moz-range-thumb {
+    transform: scale(1.18);
+    box-shadow: 0 0 0 7px color-mix(in oklab, var(--primary) 22%, transparent);
+  }
+  .slider input[aria-invalid="true"]::-webkit-slider-thumb { border-color: var(--destructive); }
+  .slider input[aria-invalid="true"]::-moz-range-thumb { border-color: var(--destructive); }
+  .slider input:focus-visible::-webkit-slider-thumb { outline: 3px solid var(--ring); outline-offset: 2px; }
+  .slider input:focus-visible::-moz-range-thumb { outline: 3px solid var(--ring); outline-offset: 2px; }
+
+  /* The value follows the thumb while you interact */
+  .slider-bubble {
+    position: absolute;
+    bottom: calc(100% - 0.125rem);
+    left: var(--_at);
+    z-index: 2;
+    padding: 0.125rem 0.5rem;
+    border-radius: var(--r-sm);
+    background: var(--foreground);
+    color: var(--background);
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, 0.25rem);
+    transition: opacity 120ms ease, transform 120ms var(--ease-ui);
+  }
+  .slider:has(input:hover:not(:disabled)) .slider-bubble,
+  .slider:has(input:focus-visible) .slider-bubble,
+  .slider:has(input:active:not(:disabled)) .slider-bubble {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  /* Marks on the track, such as each timed-habit bonus block */
+  .slider-tick {
+    position: absolute;
+    top: calc(50% + var(--_track) / 2 + 0.1875rem);
+    left: calc(var(--slider-fraction) * (100% - var(--_thumb)) + var(--_thumb) / 2);
+    width: 0.125rem;
+    height: 0.375rem;
+    border-radius: 9999px;
+    background: var(--input);
+    pointer-events: none;
+    transform: translateX(-50%);
+  }
+  .slider-tick[data-reached] { background: var(--primary); }
+
+  .slider-value {
+    border-radius: var(--r-sm);
+    background: var(--secondary);
+    padding: 0.0625rem 0.5rem;
+    color: var(--secondary-foreground);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- Switch (a themed checkbox: still a real input) ---------- */
+  .switch {
+    position: relative;
+    flex-shrink: 0;
+    width: 2.75rem;
+    height: 1.625rem;
+    appearance: none;
+    -webkit-appearance: none;
+    border: 1px solid var(--input);
+    border-radius: var(--switch-radius, 9999px);
+    background: var(--muted);
+    cursor: pointer;
+    transition: background-color 160ms ease, border-color 160ms ease;
+  }
+  .switch::before {
+    content: "";
+    position: absolute;
+    top: 0.1875rem;
+    left: 0.1875rem;
+    width: 1.125rem;
+    height: 1.125rem;
+    border-radius: inherit;
+    background: var(--muted-foreground);
+    transition: transform 180ms var(--ease-ui), background-color 160ms ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .switch:hover:not(:disabled) { border-color: var(--foreground); }
+  }
+  .switch:checked {
+    border-color: transparent;
+    background: var(--gradient-primary);
+  }
+  .switch:checked::before {
+    background: var(--primary-foreground);
+    transform: translateX(1.125rem);
+  }
+  .switch:active:not(:disabled)::before { width: 1.3rem; }
+  .switch:checked:active:not(:disabled)::before { transform: translateX(0.95rem); }
+  .switch:disabled { cursor: not-allowed; opacity: 0.55; }
+
+  /* ---------- Icon-only buttons ---------- */
+  .btn-icon {
+    display: inline-flex;
+    width: 2.75rem;
+    height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--r-md);
+    color: var(--muted-foreground);
+    transition: background-color 140ms ease, color 140ms ease, transform 140ms var(--ease-ui);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .btn-icon:hover:not(:disabled) { background: var(--muted); color: var(--foreground); }
+  }
+  .btn-icon:active:not(:disabled) { transform: scale(0.94); }
+  .btn-icon:disabled { cursor: not-allowed; opacity: 0.5; }
+  .btn-icon-danger:hover:not(:disabled) {
+    background: color-mix(in oklab, var(--destructive) 12%, transparent);
+    color: var(--destructive);
+  }
+
+  /* ---------- Active states share the theme's primary treatment ---------- */
+  .segmented :is([aria-pressed="true"], [aria-current="page"]),
+  aside nav a[aria-current="page"] {
+    background-image: var(--gradient-primary);
+    box-shadow: var(--shadow-primary);
+  }
+
+  /* ---------- Native select: themed arrow, drawn from tokens ---------- */
+  select.field {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 2.25rem;
+    background-image:
+      linear-gradient(45deg, transparent 50%, var(--muted-foreground) 50%),
+      linear-gradient(135deg, var(--muted-foreground) 50%, transparent 50%);
+    background-position: right 1.05rem center, right 0.7rem center;
+    background-size: 0.35rem 0.35rem;
+    background-repeat: no-repeat;
+    cursor: pointer;
+  }
+
+  /* ---------- Progress: a little more presence ---------- */
+  .progress-fill {
+    position: relative;
+    box-shadow: 0 0 10px color-mix(in oklab, var(--primary) 30%, transparent);
+  }
+  .progress-fill::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 50% 0;
+    border-radius: inherit;
+    background: linear-gradient(color-mix(in oklab, var(--primary-foreground) 28%, transparent), transparent);
+  }
+}
+
+/* Outside the layer on purpose: the global :focus-visible rule is unlayered, so a
+   layered rule could not win. The ring belongs on the thumb, not the whole input. */
+.slider input:focus-visible {
+  outline: none;
+}
+
+/* ---------- Entrances for things the person opened ----------
+   @starting-style animates an element the moment it appears, with no JavaScript.
+   Exits are instant on purpose: the person already knows what they closed. */
+@layer components {
+  /* Dialogs rise slightly and settle; they stay centred, so the origin is the centre. */
+  dialog.glass-overlay[open] {
+    opacity: 1;
+    transform: none;
+    transition: opacity var(--dur-enter) var(--ease-ui), transform var(--dur-enter) var(--ease-ui);
+    @starting-style {
+      opacity: 0;
+      transform: translateY(0.5rem) scale(0.97);
+    }
+  }
+  dialog.glass-overlay[open]::backdrop {
+    opacity: 1;
+    transition: opacity var(--dur-enter) var(--ease-ui);
+    @starting-style { opacity: 0; }
+  }
+
+  /* Menus grow out of the button that opened them. */
+  .popover {
+    border: 1px solid var(--glass-border);
+    outline: 1px solid var(--glass-edge);
+    outline-offset: -1px;
+    border-radius: var(--r-lg);
+    color: var(--popover-foreground);
+    background: var(--popover);
+    box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-3);
+    opacity: 1;
+    transform: none;
+    transition: opacity var(--dur-pop) var(--ease-ui), transform var(--dur-pop) var(--ease-ui);
+    @starting-style {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+    @supports (backdrop-filter: blur(1px)) {
+      -webkit-backdrop-filter: blur(var(--blur-3)) saturate(150%);
+      backdrop-filter: blur(var(--blur-3)) saturate(150%);
+      background: var(--glass-3);
+    }
+  }
+
+  /* A scrim fades rather than snapping in. */
+  .fade-in {
+    opacity: 1;
+    transition: opacity var(--dur-enter) var(--ease-ui);
+    @starting-style { opacity: 0; }
+  }
+
+  /* Rare, good news (a new level) arrives with a little lift. */
+  .announce-in {
+    opacity: 1;
+    transform: none;
+    transition: opacity var(--dur-enter) var(--ease-ui), transform var(--dur-enter) var(--ease-ui);
+    @starting-style {
+      opacity: 0;
+      transform: translateY(-0.375rem);
+    }
+  }
+
+  /* The habit check mark pops in when a habit is completed. */
+  .check-mark {
+    transition: transform var(--dur-pop) var(--ease-ui), opacity var(--dur-pop) ease;
+  }
+  [aria-checked="false"] > .check-mark,
+  span > .check-mark {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  [aria-checked="true"] > .check-mark {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* A row of figures on one surface, instead of one card per number. */
+  .stat-strip {
+    display: grid;
+    overflow: hidden;
+    grid-template-columns: repeat(var(--stat-cols-sm, 2), minmax(0, 1fr));
+  }
+  .stat-strip > * {
+    min-width: 0;
+    padding: 0.875rem 1rem;
+    box-shadow: -1px 0 0 var(--border), 0 -1px 0 var(--border);
+  }
+  @media (min-width: 64rem) {
+    .stat-strip { grid-template-columns: repeat(var(--stat-cols, 4), minmax(0, 1fr)); }
+  }
+}
+
+/* ---------- Reordering habits on the dashboard ---------- */
+@layer components {
+  /* The grip. touch-action: none means a finger on it drags the row instead of
+     scrolling the page; everywhere else on the row scrolls as usual. */
+  .reorder-handle {
+    display: inline-flex;
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 2.75rem;
+    margin-inline: -0.375rem -0.25rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--r-sm);
+    color: var(--muted-foreground);
+    opacity: 0.7;
+    cursor: grab;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+    transition: opacity var(--dur-press) ease, background-color var(--dur-press) ease, color var(--dur-press) ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .reorder-handle { opacity: 0.45; }
+    li:hover > div > .reorder-handle { opacity: 1; }
+    .reorder-handle:hover { background: var(--muted); color: var(--foreground); }
+  }
+  .reorder-dragging .reorder-handle { opacity: 1; color: var(--foreground); cursor: grabbing; }
+
+  /* The row being dragged lifts above the others. */
+  .reorder-dragging {
+    position: relative;
+    z-index: 10;
+    cursor: grabbing;
+    box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-3);
+    outline-color: color-mix(in oklab, var(--primary) 45%, transparent);
+  }
+
+  /* The slot the dragged row will drop into. */
+  .reorder-slot {
+    position: absolute;
+    inset-inline: 0;
+    border: 2px dashed color-mix(in oklab, var(--primary) 55%, transparent);
+    border-radius: var(--r-lg);
+    background: color-mix(in oklab, var(--primary) 6%, transparent);
+    pointer-events: none;
+    transition: top 160ms var(--ease-ui);
+  }
+
+  /* Move up / down: invisible to pointer users, revealed when focused by keyboard,
+     always available to screen readers. */
+  .reorder-keys {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .reorder-keys:focus-within {
+    position: static;
+    display: inline-flex;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+  }
+}
+
+/* ================= Calendar ================= */
+@layer components {
+  /* One colour per activity type, from the theme. Colour is never the only signal:
+     every chip also has its type's icon. */
+  .cal-tone-event { --tone: var(--cal-event); }
+  .cal-tone-workout { --tone: var(--cal-workout); }
+  .cal-tone-task { --tone: var(--cal-task); }
+  .cal-tone-reminder { --tone: var(--cal-reminder); }
+  .cal-tone-note { --tone: var(--cal-note); }
+  .cal-tone-milestone { --tone: var(--cal-goal); }
+  .cal-tone-habit { --tone: var(--cal-habit); }
+
+  /* A compact item: tinted fill, a coloured edge, text in the normal ink. */
+  .cal-chip {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 0.375rem;
+    border-radius: var(--r-sm);
+    border-inline-start: 3px solid var(--tone);
+    background: color-mix(in oklab, var(--tone) 15%, var(--card));
+    padding: 0.125rem 0.375rem;
+    color: var(--foreground);
+    font-size: 0.75rem;
+    line-height: 1.35;
+    text-align: start;
+    transition: background-color var(--dur-press) ease, transform var(--dur-press) var(--ease-ui);
+  }
+  .cal-chip > svg { flex-shrink: 0; color: var(--tone); }
+  button.cal-chip:active { transform: scale(0.98); }
+  @media (hover: hover) and (pointer: fine) {
+    button.cal-chip:hover { background: color-mix(in oklab, var(--tone) 24%, var(--card)); }
+  }
+  .cal-chip[data-done] { opacity: 0.7; }
+  .cal-chip[data-done] .cal-title { text-decoration: line-through; text-decoration-thickness: 1px; }
+
+  /* A timed item in the day/week grid. */
+  .cal-block {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    overflow: hidden;
+    padding-block: 0.1875rem;
+    box-shadow: 0 0 0 1px var(--card);
+  }
+
+  .cal-dot {
+    display: inline-block;
+    width: 0.4375rem;
+    height: 0.4375rem;
+    border-radius: 9999px;
+    background: var(--tone);
+  }
+
+  /* ---- Month grid ---- */
+  .cal-month {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+  .cal-cell {
+    position: relative;
+    display: flex;
+    min-width: 0;
+    min-height: 4.25rem;
+    flex-direction: column;
+    gap: 0.1875rem;
+    padding: 0.25rem;
+    box-shadow: inset -1px 0 0 var(--border), inset 0 -1px 0 var(--border);
+    transition: background-color var(--dur-press) ease;
+  }
+  @media (min-width: 48rem) {
+    .cal-cell { min-height: 7rem; padding: 0.375rem; }
+  }
+  .cal-cell[data-outside] { background: color-mix(in oklab, var(--muted) 45%, transparent); }
+  .cal-cell[data-outside] .cal-daynum { color: var(--muted-foreground); }
+  .cal-cell[data-selected] { background: color-mix(in oklab, var(--primary) 8%, transparent); }
+  .cal-cell[data-drop-active] { background: color-mix(in oklab, var(--primary) 16%, transparent); box-shadow: inset 0 0 0 2px var(--primary); }
+
+  /* The day number; today gets the primary disc. */
+  .cal-daynum {
+    display: inline-flex;
+    width: 1.75rem;
+    height: 1.75rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  /* The day button's hit area is the whole cell, so a tap anywhere selects the day.
+     Chips and "+N more" sit above it. */
+  .cal-cell-target::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: 0;
+  }
+  .cal-cell > :not(:first-child),
+  .cal-cell > :first-child > :not(.cal-cell-target) { position: relative; z-index: 1; }
+  /* Decorations (dots, habit bar) and the list's gaps let taps through to the cell. */
+  .cal-cell > :not(:first-child):not(ul),
+  .cal-cell ul { pointer-events: none; }
+  .cal-cell ul > li > * { pointer-events: auto; }
+  @media (hover: hover) and (pointer: fine) {
+    .cal-cell:has(> div > .cal-cell-target:hover) { background-color: color-mix(in oklab, var(--muted) 55%, transparent); }
+  }
+  [data-today] > .cal-daynum,
+  .cal-daynum[data-today] {
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+
+  /* ---- Day / week time grid ---- */
+  .cal-cols {
+    display: grid;
+    grid-template-columns: 3.25rem repeat(var(--cal-cols, 7), minmax(0, 1fr));
+  }
+  /* Phones show one day at a time; the day strip picks which. */
+  @media (max-width: 47.99rem) {
+    .cal-cols { grid-template-columns: 3.25rem minmax(0, 1fr); }
+  }
+  .cal-hours {
+    --hour: 3rem;
+    position: relative;
+    height: calc(var(--hour) * 24);
+    background-image: repeating-linear-gradient(
+      to bottom,
+      var(--border) 0,
+      var(--border) 1px,
+      transparent 1px,
+      transparent var(--hour)
+    );
+    box-shadow: inset 1px 0 0 var(--border);
+  }
+  .cal-hours[data-today] { background-color: color-mix(in oklab, var(--primary) 4%, transparent); }
+  .cal-hours[data-drop-active] { background-color: color-mix(in oklab, var(--primary) 7%, transparent); }
+  .cal-hour-label {
+    position: absolute;
+    inset-inline-end: 0.375rem;
+    transform: translateY(-50%);
+    color: var(--muted-foreground);
+    font-size: 0.6875rem;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  /* The current time. */
+  .cal-now {
+    position: absolute;
+    inset-inline: 0;
+    z-index: 3;
+    height: 2px;
+    background: var(--destructive);
+    pointer-events: none;
+  }
+  .cal-now::before {
+    content: "";
+    position: absolute;
+    top: -4px;
+    left: -5px;
+    width: 10px;
+    height: 10px;
+    border-radius: 9999px;
+    background: var(--destructive);
+  }
+
+  /* Where a dragged item will land in the time grid. */
+  .cal-drop-preview {
+    position: absolute;
+    inset-inline: 0.125rem;
+    z-index: 2;
+    border: 2px dashed var(--primary);
+    border-radius: var(--r-sm);
+    background: color-mix(in oklab, var(--primary) 10%, transparent);
+    pointer-events: none;
+  }
+
+  /* Draggable items: no text selection or iOS callout on a long press. */
+  [data-cal-draggable] {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    [data-cal-draggable] { cursor: grab; }
+  }
+  [data-cal-dragging] { opacity: 0.35; }
+
+  /* The copy that follows the pointer while dragging. */
+  .cal-ghost {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 60;
+    margin: 0;
+    pointer-events: none;
+    box-shadow: var(--shadow-3);
+    outline: 2px solid var(--primary);
+    outline-offset: 0;
+    opacity: 0.96;
+    cursor: grabbing;
+  }
+
+  /* Habit progress for one day: a thin bar under the day number. */
+  .cal-habit-meter {
+    height: 3px;
+    overflow: hidden;
+    border-radius: 9999px;
+    background: color-mix(in oklab, var(--cal-habit) 20%, transparent);
+  }
+  .cal-habit-meter > span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--cal-habit);
+  }
+
+  /* Filter chips: toggle buttons that show their type's colour when on. */
+  .cal-filter {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    gap: 0.375rem;
+    border: 1px solid var(--border);
+    border-radius: 9999px;
+    padding-inline: 0.75rem;
+    color: var(--muted-foreground);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    transition: color var(--dur-press) ease, background-color var(--dur-press) ease, border-color var(--dur-press) ease;
+  }
+  .cal-filter > svg { color: var(--tone); }
+  .cal-filter[aria-pressed="true"] {
+    border-color: color-mix(in oklab, var(--tone) 55%, transparent);
+    background: color-mix(in oklab, var(--tone) 14%, var(--card));
+    color: var(--foreground);
+  }
+  .cal-filter[aria-pressed="false"] > svg { opacity: 0.45; }
+  @media (hover: hover) and (pointer: fine) {
+    .cal-filter:hover { color: var(--foreground); }
+  }
+
+  /* A view switch (month, week, day) eases the new grid in. */
+  .cal-enter {
+    opacity: 1;
+    transition: opacity var(--dur-pop) var(--ease-ui);
+    @starting-style { opacity: 0; }
+  }
+  [aria-busy="true"] > .cal-enter { opacity: 0.6; }
+
+  /* Fingers need a little more height on month chips. */
+  @media (pointer: coarse) {
+    .cal-month .cal-chip { min-height: 1.5rem; }
+  }
+}

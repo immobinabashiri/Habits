@@ -19,7 +19,7 @@ export function FormField({ id, label, error, ...inputProps }: FormFieldProps) {
         id={id}
         aria-invalid={error ? true : undefined}
         aria-describedby={error ? errorId : undefined}
-        className="block min-h-11 w-full rounded-md border border-input bg-card px-3 text-base text-card-foreground placeholder:text-muted-foreground disabled:opacity-60 aria-[invalid=true]:border-destructive"
+        className="field block min-h-11 w-full"
         {...inputProps}
       />
       {error ? (

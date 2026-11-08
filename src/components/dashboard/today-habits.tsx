@@ -1,10 +1,12 @@
 "use client";
 
-import { Check, Clock, Flame, Gem, ListChecks, Plus } from "lucide-react";
+import { ArrowDown, ArrowUp, Check, Clock, Flame, Gem, GripVertical, ListChecks, Plus } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { HabitIcon } from "@/components/habits/habit-icons";
-import { LIMITS } from "@/lib/domain/defaults";
+import { Slider } from "@/components/ui/slider";
+import { useDragReorder } from "@/components/dashboard/use-drag-reorder";
+import { LIMITS, MAX_BONUS_UNITS } from "@/lib/domain/defaults";
 import { computeReward } from "@/lib/domain/progress";
 import type { DashboardHabit, DashboardStats } from "@/types/dashboard";
 
@@ -14,6 +16,15 @@ interface TodayHabitsProps {
   busy: boolean; // a request is in flight; every row waits
   onComplete: (habitId: string, minutes?: number) => void;
   onUndo: (habitId: string) => void;
+  onReorder: (dueHabitIds: string[]) => void; // the new order of the habits due today
+}
+
+interface ReorderControls {
+  index: number;
+  count: number;
+  dragging: boolean;
+  handle: ReturnType<ReturnType<typeof useDragReorder>["handleProps"]>;
+  onMove: (by: -1 | 1) => void;
 }
 
 function RewardText({ xp, gems }: { xp: number; gems: number }) {
@@ -34,11 +45,13 @@ function HabitRow({
   busy,
   onComplete,
   onUndo,
+  reorder,
 }: {
   item: DashboardHabit;
   busy: boolean;
   onComplete: TodayHabitsProps["onComplete"];
   onUndo: TodayHabitsProps["onUndo"];
+  reorder: ReorderControls | null; // null when there is nothing to reorder
 }) {
   const { habit, completedToday, exemptToday, streak, todayReward, nextMilestone } = item;
   const { timed } = habit;
@@ -51,6 +64,15 @@ function HabitRow({
   const minutesOk =
     timed !== null && parsed >= timed.targetMinutes && parsed <= LIMITS.maxMinutesPerDay;
   const preview = timed && minutesOk ? computeReward(habit, parsed) : null;
+  // The slider covers the range that can still earn more. Typing allows any longer time.
+  const sliderMax = timed
+    ? Math.min(LIMITS.maxMinutesPerDay, timed.targetMinutes + MAX_BONUS_UNITS * timed.unitMinutes)
+    : 0;
+  const bonusTicks = timed
+    ? Array.from({ length: MAX_BONUS_UNITS }, (_, i) => timed.targetMinutes + (i + 1) * timed.unitMinutes).filter(
+        (tick) => tick < sliderMax,
+      )
+    : [];
 
   function submit() {
     if (timed) {
@@ -65,19 +87,26 @@ function HabitRow({
     onComplete(habit.id);
   }
 
-  const circleClass = `inline-flex size-11 shrink-0 items-center justify-center rounded-full border-2 transition-colors disabled:opacity-60 ${
+  const circleClass = `inline-flex size-11 shrink-0 items-center justify-center rounded-full border-2 transition-[color,background-color,border-color,transform] duration-150 active:scale-95 disabled:opacity-60 ${
     completedToday
       ? "border-success bg-success-soft text-success"
-      : "border-input bg-card text-transparent hover:border-primary"
+      : "border-input bg-field text-success hover:border-primary"
   }`;
 
   return (
     <li
-      className={`rounded-lg border p-3 ${
-        completedToday ? "border-success/40 bg-success-soft/25" : "border-border bg-card"
-      } ${locked ? "opacity-70" : ""}`}
+      data-reorder-id={habit.id}
+      className={`surface p-3 ${
+        completedToday ? "border-success/40 bg-success-soft/25" : ""
+      } ${locked ? "opacity-70" : ""} ${reorder?.dragging ? "reorder-dragging" : ""}`}
     >
       <div className="flex items-center gap-3">
+        {reorder ? (
+          // Pointer-only handle. Keyboard and screen reader users get the Move buttons.
+          <span aria-hidden="true" title="Drag to reorder" className="reorder-handle" {...reorder.handle}>
+            <GripVertical className="size-4" />
+          </span>
+        ) : null}
         {timed && !completedToday ? (
           // Timed habits are completed from the minutes form below.
           <span aria-hidden="true" className={circleClass} />
@@ -91,7 +120,7 @@ function HabitRow({
             onClick={completedToday ? () => onUndo(habit.id) : submit}
             className={circleClass}
           >
-            <Check className="size-5" aria-hidden="true" />
+            <Check className="check-mark size-5" aria-hidden="true" />
           </button>
         )}
 
@@ -132,6 +161,29 @@ function HabitRow({
             <span className="sr-only">-day streak</span>
           </span>
         ) : null}
+
+        {reorder ? (
+          <div className="reorder-keys">
+            <button
+              type="button"
+              onClick={() => reorder.onMove(-1)}
+              disabled={reorder.index === 0}
+              aria-label={`Move ${habit.name} up`}
+              className="btn-icon"
+            >
+              <ArrowUp className="size-4" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={() => reorder.onMove(1)}
+              disabled={reorder.index === reorder.count - 1}
+              aria-label={`Move ${habit.name} down`}
+              className="btn-icon"
+            >
+              <ArrowDown className="size-4" aria-hidden="true" />
+            </button>
+          </div>
+        ) : null}
       </div>
 
       {timed && !completedToday && !locked ? (
@@ -141,8 +193,25 @@ function HabitRow({
             event.preventDefault();
             submit();
           }}
-          className="mt-3 flex flex-wrap items-start gap-3 pl-14"
+          className={`mt-3 flex flex-wrap items-start gap-3 ${reorder ? "sm:pl-[5.75rem]" : "sm:pl-14"}`}
         >
+          {sliderMax > timed.targetMinutes ? (
+            <div className="w-full">
+              <Slider
+                label={`Minutes for ${habit.name}`}
+                unit="min"
+                min={timed.targetMinutes}
+                max={sliderMax}
+                ticks={bonusTicks}
+                value={Number.isNaN(parsed) ? timed.targetMinutes : parsed}
+                disabled={busy}
+                onChange={(value) => {
+                  setMinutes(String(value));
+                  setError(null);
+                }}
+              />
+            </div>
+          ) : null}
           <div className="space-y-1">
             <label htmlFor={`minutes-${habit.id}`} className="sr-only">
               Minutes for {habit.name}
@@ -163,7 +232,7 @@ function HabitRow({
                 disabled={busy}
                 aria-invalid={error ? true : undefined}
                 aria-describedby={`minutes-hint-${habit.id}`}
-                className="block min-h-11 w-24 rounded-md border border-input bg-card px-3 text-base text-card-foreground disabled:opacity-60 aria-[invalid=true]:border-destructive"
+                className="field block min-h-11 w-24"
               />
               <span className="text-sm text-muted-foreground">min</span>
             </div>
@@ -186,7 +255,7 @@ function HabitRow({
           <button
             type="submit"
             disabled={busy}
-            className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
+            className="btn btn-primary px-4"
           >
             Complete
           </button>
@@ -196,21 +265,32 @@ function HabitRow({
   );
 }
 
-export function TodayHabits({ habits, stats, busy, onComplete, onUndo }: TodayHabitsProps) {
+export function TodayHabits({ habits, stats, busy, onComplete, onUndo, onReorder }: TodayHabitsProps) {
   const due = habits.filter((item) => item.scheduledToday);
+  const dueIds = due.map((item) => item.habit.id);
+  const [announcement, setAnnouncement] = useState("");
+  const { listRef, draggingId, slot, handleProps, move } = useDragReorder({
+    ids: dueIds,
+    disabled: busy,
+    onReorder(next, movedId) {
+      const name = due.find((item) => item.habit.id === movedId)?.habit.name ?? "Habit";
+      setAnnouncement(`${name} moved to position ${next.indexOf(movedId) + 1} of ${next.length}.`);
+      onReorder(next);
+    },
+  });
   const offToday = habits.filter((item) => !item.scheduledToday);
   const percent = stats.todayTotal === 0 ? 0 : Math.round((stats.todayDone / stats.todayTotal) * 100);
 
   if (habits.length === 0) {
     return (
-      <section aria-labelledby="today-title" className="rounded-xl border border-dashed border-border px-6 py-12 text-center">
+      <section aria-labelledby="today-title" className="empty-box px-6 py-12 text-center">
         <span
           aria-hidden="true"
-          className="mx-auto inline-flex size-14 items-center justify-center rounded-full bg-secondary text-secondary-foreground"
+          className="mx-auto inline-flex size-14 items-center justify-center icon-bubble"
         >
           <ListChecks className="size-7" />
         </span>
-        <h2 id="today-title" className="mt-4 text-lg font-semibold">
+        <h2 id="today-title" className="mt-4 type-h2">
           No habits yet
         </h2>
         <p className="mx-auto mt-1 max-w-sm text-muted-foreground">
@@ -218,7 +298,7 @@ export function TodayHabits({ habits, stats, busy, onComplete, onUndo }: TodayHa
         </p>
         <Link
           href="/dashboard/habits"
-          className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+          className="btn btn-primary mt-5 gap-2 px-4"
         >
           <Plus className="size-5" aria-hidden="true" />
           Add a habit
@@ -230,7 +310,7 @@ export function TodayHabits({ habits, stats, busy, onComplete, onUndo }: TodayHa
   return (
     <section aria-labelledby="today-title" className="space-y-4">
       <div className="flex items-end justify-between gap-3">
-        <h2 id="today-title" className="text-lg font-bold tracking-tight">
+        <h2 id="today-title" className="type-h2">
           Today
         </h2>
         <p className="text-sm text-muted-foreground">
@@ -245,32 +325,57 @@ export function TodayHabits({ habits, stats, busy, onComplete, onUndo }: TodayHa
           aria-valuemin={0}
           aria-valuemax={stats.todayTotal}
           aria-valuenow={stats.todayDone}
-          className="h-2 w-full overflow-hidden rounded-full bg-muted"
+          className="progress-track h-2 w-full"
         >
           <div
-            className="h-full rounded-full bg-success transition-[width] duration-500"
+            className="progress-fill"
             style={{ width: `${percent}%` }}
           />
         </div>
       ) : null}
 
       {due.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-border px-4 py-8 text-center text-muted-foreground">
+        <p className="empty-box px-4 py-8 text-center text-muted-foreground">
           None of your habits are scheduled today. Enjoy the break.
         </p>
       ) : (
-        <ul className="space-y-3">
-          {due.map((item) => (
+        <div className="relative">
+        <ul ref={listRef} aria-label="Habits due today" className="space-y-3">
+          {due.map((item, index) => (
             <HabitRow
               key={item.habit.id}
               item={item}
               busy={busy}
               onComplete={onComplete}
               onUndo={onUndo}
+              reorder={
+                due.length > 1
+                  ? {
+                      index,
+                      count: due.length,
+                      dragging: draggingId === item.habit.id,
+                      handle: handleProps(index),
+                      onMove: (by) => move(index, by),
+                    }
+                  : null
+              }
             />
           ))}
         </ul>
+        {/* Where the dragged habit will land. Outside the list, so it never shifts the layout. */}
+        {slot ? (
+          <div
+            aria-hidden="true"
+            className="reorder-slot"
+            style={{ top: slot.top, height: slot.height }}
+          />
+        ) : null}
+        </div>
       )}
+
+      <p role="status" className="sr-only">
+        {announcement}
+      </p>
 
       {offToday.length > 0 ? (
         <div className="pt-1">

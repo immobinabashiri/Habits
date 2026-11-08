@@ -49,8 +49,7 @@ export function Modal({ open, onClose, size = "md", children }: ModalProps) {
         if (event.target === event.currentTarget) onClose();
       }}
       // m-auto: Tailwind's reset removes the browser's default centering margin.
-      // backdrop:bg-black/50 (not bg-foreground): foreground is near-white in dark mode.
-      className={`m-auto max-h-[90dvh] w-[calc(100%-2rem)] overflow-hidden rounded-xl border border-border bg-card p-0 text-card-foreground shadow-xl backdrop:bg-black/50 ${
+      className={`glass-overlay m-auto max-h-[90dvh] w-[calc(100%-2rem)] overflow-hidden p-0 backdrop:bg-overlay backdrop:backdrop-blur-sm ${
         size === "sm" ? "max-w-sm" : "max-w-lg"
       }`}
     >

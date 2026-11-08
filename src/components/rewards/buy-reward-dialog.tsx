@@ -47,11 +47,11 @@ export function BuyRewardDialog({ reward, gems, onClose, onBought }: BuyRewardDi
       <div className="flex items-center gap-3">
         <span
           aria-hidden="true"
-          className="inline-flex size-12 shrink-0 items-center justify-center rounded-md bg-secondary text-secondary-foreground"
+          className="inline-flex size-12 shrink-0 items-center justify-center icon-tile"
         >
           <RewardIcon name={reward.icon} className="size-6" />
         </span>
-        <h2 id="modal-title" className="min-w-0 text-lg font-bold tracking-tight">
+        <h2 id="modal-title" className="min-w-0 type-h2">
           Buy “{reward.name}”?
         </h2>
       </div>
@@ -87,14 +87,14 @@ export function BuyRewardDialog({ reward, gems, onClose, onBought }: BuyRewardDi
           value={note}
           onChange={(e) => setNote(e.target.value)}
           disabled={pending}
-          className="block min-h-11 w-full rounded-md border border-input bg-card px-3 text-base text-card-foreground placeholder:text-muted-foreground disabled:opacity-60"
+          className="field block min-h-11 w-full"
         />
       </div>
 
       <p className="text-sm text-muted-foreground">Purchases cannot be refunded.</p>
 
       {error ? (
-        <p role="alert" className="rounded-md border border-destructive px-3 py-2 text-sm text-destructive">
+        <p role="alert" className="alert alert-error">
           {error}
         </p>
       ) : null}
@@ -103,7 +103,7 @@ export function BuyRewardDialog({ reward, gems, onClose, onBought }: BuyRewardDi
         <button
           type="button"
           onClick={onClose}
-          className="min-h-11 rounded-md px-4 text-sm font-semibold text-muted-foreground hover:bg-muted hover:text-foreground"
+          className="btn btn-quiet px-4"
         >
           Cancel
         </button>
@@ -111,7 +111,7 @@ export function BuyRewardDialog({ reward, gems, onClose, onBought }: BuyRewardDi
           type="submit"
           disabled={pending}
           aria-busy={pending}
-          className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
+          className="btn btn-primary px-5"
         >
           {pending ? "Buying…" : `Buy for ${reward.price.toLocaleString("en-US")} gems`}
         </button>

@@ -1,10 +1,10 @@
 import { BarChart3, Clock, Flame, Gem, ListChecks, Target, Zap } from "lucide-react";
 import Link from "next/link";
-import type { ReactNode } from "react";
 import { HabitIcon } from "@/components/habits/habit-icons";
 import { BarChart } from "@/components/stats/bar-chart";
 import type { ChartBar } from "@/components/stats/bar-chart";
 import { ProgressBar } from "@/components/ui/progress-bar";
+import { StatStrip } from "@/components/ui/stat-strip";
 import { formatDateKey } from "@/lib/domain/dates";
 import { bucketDays, formatMinutes, STATS_RANGES } from "@/lib/domain/stats";
 import type { DayStats, HabitRangeStats } from "@/lib/domain/stats";
@@ -21,20 +21,6 @@ const shortDate = (key: DateKey) => {
 
 const plural = (count: number, one: string, many: string) => `${count} ${count === 1 ? one : many}`;
 
-function Stat({ icon, label, value, note }: { icon: ReactNode; label: string; value: string; note?: string }) {
-  return (
-    <div className="flex items-start gap-3 rounded-xl border border-border bg-card p-4">
-      <span aria-hidden="true" className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-secondary text-primary">
-        {icon}
-      </span>
-      <div className="min-w-0">
-        <p className="text-sm text-muted-foreground">{label}</p>
-        <p className="text-xl font-bold leading-tight">{value}</p>
-        {note ? <p className="mt-0.5 text-xs text-muted-foreground">{note}</p> : null}
-      </div>
-    </div>
-  );
-}
 
 // 90 days is drawn as 13 weekly bars; shorter periods as one bar per day.
 function toBars(daily: DayStats[], size: number, values: (day: DayStats) => number[]): ChartBar[] {
@@ -71,24 +57,22 @@ export function StatsView({ data }: { data: StatsData }) {
   const totalOf = (bars: ChartBar[], index: number) => bars.reduce((n, bar) => n + bar.values[index], 0);
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
+    <div className="page">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Stats</h1>
+          <h1 className="type-h1">Stats</h1>
           <p className="mt-1 text-muted-foreground">
             {formatDateKey(data.from)} to {formatDateKey(data.today)}
           </p>
         </div>
         <nav aria-label="Time range">
-          <ul className="glass inline-flex rounded-full p-1">
+          <ul className="segmented">
             {STATS_RANGES.map((value) => (
               <li key={value}>
                 <Link
                   href={`/dashboard/stats?range=${value}`}
                   aria-current={range === value ? "page" : undefined}
-                  className={`inline-flex min-h-9 items-center rounded-full px-4 text-sm font-medium transition-colors ${
-                    range === value ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
-                  }`}
+                  className="segmented-item"
                 >
                   {value} days
                 </Link>
@@ -99,55 +83,58 @@ export function StatsView({ data }: { data: StatsData }) {
       </div>
 
       {data.habitCount === 0 ? (
-        <div className="mt-8 flex flex-col items-center gap-4 rounded-lg border border-dashed border-border px-6 py-16 text-center">
-          <span aria-hidden="true" className="inline-flex size-14 items-center justify-center rounded-full bg-secondary text-secondary-foreground">
+        <div className="mt-8 flex flex-col items-center gap-4 empty-box px-6 py-16 text-center">
+          <span aria-hidden="true" className="inline-flex size-14 items-center justify-center icon-bubble">
             <BarChart3 className="size-7" />
           </span>
           <div>
-            <h2 className="text-lg font-semibold">No numbers yet</h2>
+            <h2 className="type-h2">No numbers yet</h2>
             <p className="mt-1 max-w-sm text-muted-foreground">Create a habit and complete it for a few days. Your charts will appear here.</p>
           </div>
-          <Link href="/dashboard/habits" className="inline-flex min-h-11 items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90">
+          <Link href="/dashboard/habits" className="btn btn-primary gap-2 px-4">
             <ListChecks className="size-5" aria-hidden="true" />
             Go to Habits
           </Link>
         </div>
       ) : (
         <>
-          <section aria-label="Summary of this period" className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <Stat
-              icon={<Target className="size-5" />}
-              label="Completion rate"
-              value={summary.percent === null ? "No data" : `${summary.percent}%`}
-              note={summary.due === 0 ? "Nothing was due in this period." : `${summary.done} of ${summary.due} habit-days done`}
-            />
-            <Stat
-              icon={<Flame className="size-5" />}
-              label="Perfect days"
-              value={String(summary.perfectDays)}
-              note={`${plural(summary.activeDays, "active day", "active days")} out of ${range}`}
-            />
-            <Stat icon={<Zap className="size-5" />} label="XP earned" value={summary.xp.toLocaleString("en-US")} />
-            <Stat
-              icon={<Gem className="size-5" />}
-              label="Gems earned / spent"
-              value={`${summary.earned.toLocaleString("en-US")} / ${summary.spent.toLocaleString("en-US")}`}
-            />
-            <Stat icon={<Clock className="size-5" />} label="Time logged" value={formatMinutes(summary.minutes)} note="From habits you track in minutes" />
-            <Stat
-              icon={<BarChart3 className="size-5" />}
-              label="All time"
-              value={`${lifetime.completions.toLocaleString("en-US")} done`}
-              note={
-                lifetime.firstDay
+          <StatStrip
+            label="Summary of this period"
+            columns={3}
+            className="mt-6"
+            items={[
+              {
+                icon: <Target />,
+                label: "Completion rate",
+                value: summary.percent === null ? "No data" : `${summary.percent}%`,
+                hint: summary.due === 0 ? "Nothing was due in this period." : `${summary.done} of ${summary.due} habit-days done`,
+              },
+              {
+                icon: <Flame />,
+                label: "Perfect days",
+                value: String(summary.perfectDays),
+                hint: `${plural(summary.activeDays, "active day", "active days")} out of ${range}`,
+              },
+              { icon: <Zap />, label: "XP earned", value: summary.xp.toLocaleString("en-US") },
+              {
+                icon: <Gem />,
+                label: "Gems earned / spent",
+                value: `${summary.earned.toLocaleString("en-US")} / ${summary.spent.toLocaleString("en-US")}`,
+              },
+              { icon: <Clock />, label: "Time logged", value: formatMinutes(summary.minutes), hint: "From habits you track in minutes" },
+              {
+                icon: <BarChart3 />,
+                label: "All time",
+                value: `${lifetime.completions.toLocaleString("en-US")} done`,
+                hint: lifetime.firstDay
                   ? `On ${plural(lifetime.activeDays, "day", "days")}, since ${formatDateKey(lifetime.firstDay)}`
-                  : "Your first completion starts the count."
-              }
-            />
-          </section>
+                  : "Your first completion starts the count.",
+              },
+            ]}
+          />
 
           {summary.done === 0 ? (
-            <p className="mt-6 rounded-md border border-dashed border-border px-4 py-3 text-sm text-muted-foreground">
+            <p className="mt-6 empty-box px-4 py-3 text-sm text-muted-foreground">
               No habits were completed in this period yet, so the charts below are empty.
             </p>
           ) : null}
@@ -163,7 +150,7 @@ export function StatsView({ data }: { data: StatsData }) {
               ]}
               mode="overlay"
             />
-            <div className="grid gap-6 lg:grid-cols-2">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               <BarChart
                 title={`XP per ${spanLabel}`}
                 summary={`${totalOf(xpBars, 0)} XP earned over ${range} days.`}
@@ -177,16 +164,16 @@ export function StatsView({ data }: { data: StatsData }) {
                 bars={gemBars}
                 series={[
                   { name: "Earned", barClass: "bg-success" },
-                  { name: "Spent", barClass: "bg-reward" },
+                  { name: "Spent", barClass: "bg-warning" },
                 ]}
                 mode="grouped"
               />
             </div>
           </div>
 
-          <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)]">
-            <section aria-labelledby="weekday-title" className="rounded-xl border border-border bg-card p-4">
-              <h2 id="weekday-title" className="font-bold tracking-tight">
+          <div className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)]">
+            <section aria-labelledby="weekday-title" className="panel p-4">
+              <h2 id="weekday-title" className="type-h3">
                 Best days of the week
               </h2>
               <ul className="mt-3 space-y-3">
@@ -208,8 +195,8 @@ export function StatsView({ data }: { data: StatsData }) {
               </ul>
             </section>
 
-            <section aria-labelledby="habits-title" className="rounded-xl border border-border bg-card p-4">
-              <h2 id="habits-title" className="font-bold tracking-tight">
+            <section aria-labelledby="habits-title" className="panel p-4">
+              <h2 id="habits-title" className="type-h3">
                 Habit by habit
               </h2>
               {best ? (
@@ -228,7 +215,7 @@ export function StatsView({ data }: { data: StatsData }) {
                 {habits.map((habit) => (
                   <li key={habit.habitId} className="py-3">
                     <div className="flex items-center gap-3">
-                      <span aria-hidden="true" className="inline-flex size-9 shrink-0 items-center justify-center rounded-md bg-secondary text-secondary-foreground">
+                      <span aria-hidden="true" className="inline-flex size-9 shrink-0 items-center justify-center icon-tile">
                         <HabitIcon name={habit.icon} className="size-4" />
                       </span>
                       <div className="min-w-0 flex-1">
